@@ -1,55 +1,11 @@
 #!/usr/bin/env python
 
-import parser
-
-class DjangoModel:
-    nameClass = "lol"
-    var = {}
-
-    def __init__(self):
-        self.nameClass = ""
-        self.var = {}
-
-    def setClassName(self, className):
-        self.nameClass = className
-        
-    def addFunc(self, Name, Type):
-        self.var[Name] = Type
-
-pyFile = open("out.py", 'r')
-inClass = False
-inMeta = False
-ClassName = ""
-parsed = []
-tmpModel = DjangoModel()
-
-for line in pyFile.readlines():
-    if line[0:5] == "class":
-        if inClass == True:
-            parsed.append(tmpModel)
-            inMeta = False;
-            tmpModel = DjangoModel()
-        else:
-            inClass = True
-            inMeta = False;
-        className = line[6:].split("(")[0]
-        tmpModel.setClassName(className)
-        
-    if "Meta" in line:
-        inMeta = True;
-
-    if inClass == True and inMeta == False and "=" in line:
-        varName = line.split("=")[0].replace(" ", "")
-        if "ForeignKey" in line:
-            varType = line.split("=")[1].split(",")[0].replace(" ", "").replace("\n", "")
-        else:
-            varType = line.split("=")[1].split("(")[0].replace(" ", "").replace("\n", "")
-        tmpModel.addFunc(varName, varType)
+from ParsePyModel import *
 
 def getTypeObjc(varType):
     if "ForeignKey" in varType :
         typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
-        codeImport = "@import " + typeConverted + ".h" + "\n"
+        codeImport = "@import \"" + typeConverted + ".h\"" + "\n"
         return typeConverted, codeImport
     
     typeTable = { "models.CharField" : "NSString",
@@ -75,7 +31,7 @@ def header():
     code += "//\n"
     return code
 
-def generateObjc():
+def generateObjc(parsed):
     for model in parsed:
         objcHeader = open("output/" + model.nameClass + ".h", "w")
         
@@ -89,7 +45,7 @@ def generateObjc():
             if varName == "id":
                 varName = "_id"
             elif varName == "description":
-                varName = "_description";
+                varName = "_description"
                 
             if newImport != None:
                 codeImport += newImport 
@@ -117,4 +73,8 @@ def generateObjc():
 
         objcClass.write(code)
 
-generateObjc()
+def main():
+    n = ParsePyModel("out.py")
+    generateObjc(n.parse())
+
+main()
