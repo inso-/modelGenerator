@@ -23,7 +23,6 @@ Dependencies:
 
 OS Supported:  
 - unix(osx)/linux
-- windows
 
 Easy to Use: 
 
