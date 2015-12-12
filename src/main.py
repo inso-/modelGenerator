@@ -3,6 +3,7 @@ from settings import *
 from ParsePyModel import *
 from pydjobjc import *
 from pydjswift import *
+from pydjjava import *
 import sys
 
 def main():
@@ -25,5 +26,7 @@ def main():
         generateObjc(n.parsed, OBJC_PROMPT, verbose)
     if (SWIFT or SWIFT_PROMPT):
         generateSwift(n.parsed, SWIFT_PROMPT, verbose)
+    if (JAVA or JAVA_PROMPT):
+        generateJava(n.parsed, JAVA_PROMPT, verbose)
 
 main()

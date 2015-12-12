@@ -13,6 +13,11 @@ def configure_generate_settings():
                         swift_1 = query_yes_no("For each models prompt confirm generate in Swift")
             else:
                         swift_1 = False;
+            java = query_yes_no("Generate all models in Java")
+            if (swift is False):
+                        java_1 = query_yes_no("For each models prompt confirm generate in Java")
+            else:
+                        java_1 = False;
             settings = open("src/settings.py", "w")
             code = ""
             if (objc):
@@ -31,6 +36,14 @@ def configure_generate_settings():
                         code += "SWIFT_PROMPT = 1\n"
             else:
                         code += "SWIFT_PROMPT = 0\n"
+            if (java):
+                        code += "JAVA = 1\n"
+            else:
+                        code += "JAVA = 0\n"
+            if (java):
+                        code += "JAVA_PROMPT = 1\n"
+            else:
+                        code += "JAVA_PROMPT = 0\n"
             settings.write(code)
 
 def getEngineByDB(database):
