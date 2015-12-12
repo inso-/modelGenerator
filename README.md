@@ -15,6 +15,14 @@ Destination (Language of Generated Object) avalaible:
 - Objective-C (.h/.m)
 - Swift (.swift)
 
+Dependencies:  
+- Python
+- virtualenv
+
+OS Supported:  
+- UNIX(OSX)/LINUX
+- WINDOWS
+
 Easy to Use: 
 
 - ./install  
