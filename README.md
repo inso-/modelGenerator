@@ -14,6 +14,8 @@ Destination (Language of Generated Object) avalaible:
 
 - Objective-C (.h/.m)
 - Swift (.swift)
+- Java (.java)  
+with Getter an Setter for each model's object attributes  
 
 Dependencies:  
 - python
