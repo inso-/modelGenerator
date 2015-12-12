@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-
-from ParsePyModel import *
+from PromptUtils import *
 
 def getTypeObjc(varType):
     if "ForeignKey" in varType :
@@ -31,8 +30,10 @@ def header():
     code += "//\n"
     return code
 
-def generateObjc(parsed):
+def generateObjc(parsed, prompt=False, verbose=False):
     for model in parsed:
+        if prompt and not query_yes_no("generate " + model.nameClass + " ?"):
+            continue
         objcHeader = open("output/" + model.nameClass + ".h", "w")
         
         code = ""
@@ -56,7 +57,11 @@ def generateObjc(parsed):
         code += codeImport + "\n"
         code += codeCor
 
+            
         objcHeader.write(code)
+
+        if verbose:
+            print "Generate output/" + model.nameClass + ".h"
 
         objcClass = open("output/" + model.nameClass + ".m", "w")
         code = ""
@@ -72,9 +77,6 @@ def generateObjc(parsed):
         code += codeCor
 
         objcClass.write(code)
-
-def main():
-    n = ParsePyModel("out.py")
-    generateObjc(n.parse())
-
-main()
+        
+        if verbose:
+            print "Generate output/" + model.nameClass + ".m"

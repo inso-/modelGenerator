@@ -1,0 +1,108 @@
+#!/usr/bin/env python
+import sys
+from src.PromptUtils import *
+
+def configure_generate_settings():
+            objc = query_yes_no("Generate all models in Obj-C")
+            if (objc is False):
+                        objc_1 = query_yes_no("For each models prompt confirm generate in Obj-C")
+            else:
+                        objc_1 = False;
+            swift = query_yes_no("Generate all models in Swift")
+            if (swift is False):
+                        swift_1 = query_yes_no("For each models prompt confirm generate in Swift")
+            else:
+                        swift_1 = False;
+            settings = open("src/settings.py", "w")
+            code = ""
+            if (objc):
+                        code += "OBJC = 1\n"
+            else:
+                        code += "OBJC = 0\n"
+            if (objc_1):
+                        code += "OBJC_PROMPT = 1\n"
+            else:
+                        code += "OBJC_PROMPT = 0\n"
+            if (swift):
+                        code += "SWIFT = 1\n"
+            else:
+                        code += "SWIFT = 0\n"
+            if (swift_1):
+                        code += "SWIFT_PROMPT = 1\n"
+            else:
+                        code += "SWIFT_PROMPT = 0\n"
+            settings.write(code)
+
+def getEngineByDB(database):
+            typeTable = { "sqlite3" : "django.db.backends.sqlite3",
+                          "mysql" : "django.db.backends.mysql",
+                          "oracle" : "django.db.backends.oracle",
+                          "postgresql" : "django.db.backends.postgresql",
+                          "postgresql_psycopg2" : "django.db.backends.postgresql_psycopg2",
+            }
+            typeBackend = typeTable.get(database)
+            if typeBackend is None:
+                        print "database type not found: " + database
+                        return "django.db.backends.sqlite3"
+            return typeBackend
+
+def find_sub(the_list, substring):
+            i = 0
+            for it in the_list:
+                        if substring in it:
+                                    return i
+                        i = i + 1
+            return -1
+
+def configure_database_settings():
+            res = query_multiple("Database Type", ["sqlite3", "mysql", "oracle", "postgresql", "postgresql_psycopg2"], default=["mysql"])
+            if (res != "sqlite3"):
+                        ip = query("Database IP", False, "127.0.0.1")
+                        port = query("Database Port", False, "1234")
+                        user = query("Database User", False, "Admin")
+                        name = query("Database Name")
+                        password = query("Database Password", True)
+            else:
+                        import os
+                        path = query("Sqlite3 file path", False, os.getcwd() + "/db.sqlite3")
+            code = "# Database\n # https://docs.djangoproject.com/en/1.9/ref/settings/#databases\n\n"
+                        
+            code += "DATABASES = {\n\t'default': {\n"
+
+            code += "\t\t'ENGINE' : '" + getEngineByDB(res) + "',\n"
+            if (res == "sqlite3"):
+                        code += "\t\t'NAME': '" + path + "',\n"
+            else:
+                        code += "\t\t'NAME': '" + name + "',\n"
+                        code += "\t\t'USER': '" + user + "',\n"
+                        code += "\t\t'PASSWORD': '" + password + "',\n"
+                        code += "\t\t'HOST': '" + ip + "',\n"
+                        code += "\t\t'PORT': '" + port + "',\n"
+                        
+            code += "\t\t}\n\t}\n"
+            localSettings = open("ModelGenerator/ModelGenerator/local_settings.py", "w")
+            localSettings.write(code)
+
+            settings = open("ModelGenerator/ModelGenerator/settings.py", "r+")
+            content = settings.read()
+            settings = open("ModelGenerator/ModelGenerator/settings.py", "w")
+
+            if "DATABASES" in content:
+                        tmp = content.split('\n')
+                        a = find_sub(tmp, "DATABASES")
+                        del tmp[a-3:a+6]
+                        content = "\n".join(tmp)
+            if "local_settings.py" not in content:
+                        content += "\nfrom local_settings import *"
+            settings.write(content)
+
+def main():
+           if len(sys.argv) == 1:
+                       configure_database_settings()
+                       configure_generate_settings()
+           elif "-d" in sys.argv or "--database" in sys.argv:
+                       configure_database_settings()
+           elif "-g" in sys.argv or "--generate" in sys.argv:
+                       configure_generate_settings()
+            
+main()

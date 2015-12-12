@@ -1,14 +1,14 @@
 from DjangoModel import *
 
 class ParsePyModel:
-    pyFile = open("out.py", 'r')
+    pyFile = None
     inClass = False
     inMeta = False
     ClassName = ""
     parsed = []
     tmpModel = DjangoModel()
 
-    def __init__(self, fileName):
+    def __init__(self, fileName="out.py"):
         self.pyFile = open(fileName, 'r')
         self.parsed = []
         self.inClass = False

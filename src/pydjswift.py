@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-
-from ParsePyModel import *
+from PromptUtils import *
 
 def getTypeSwift(varType):
     if "ForeignKey" in varType :
@@ -31,8 +30,10 @@ def header():
     code += "//\n"
     return code
 
-def generateObjc(parsed):
+def generateSwift(parsed, prompt=False, verbose=False):
     for model in parsed:
+        if prompt and not query_yes_no("generate " + model.nameClass + " ?"):
+            continue
         swiftFile = open("output/" + model.nameClass + ".swift", "w")
         
         code = ""
@@ -56,8 +57,5 @@ def generateObjc(parsed):
 
         swiftFile.write(code)
 
-def main():
-    n = ParsePyModel("out.py")
-    generateObjc(n.parse())
-
-main()
+        if verbose:
+            print "Generate output/" + model.nameClass + ".swift"
