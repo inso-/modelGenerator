@@ -3,14 +3,14 @@
 Tired to loose time to create all you model object class, stop loosing your time !  
 Generate it from your database in only 2 minutes !  
 
-Source(Type of Database) supported: 
+Source (Type of Database) supported: 
 
 - mysql
 - postgresql
 - sqlite3
 - oracle
 
-Destination(Language of Generated Object) avalaible: 
+Destination (Language of Generated Object) avalaible: 
 
 - Objective-C (.h/.m)
 - Swift (.swift)
