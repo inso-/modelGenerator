@@ -25,8 +25,8 @@ def getTypeSwift(varType):
 
 def header():
     code = "//\n"
-    code += "//   Generate By \n"
-    code += "//   Thomas Moussajee software\n"
+    code += "//   Generate By modelGenerator\n"
+    code += "//   https://github.com/inso-/modelGenerator\n"
     code += "//\n"
     return code
 
