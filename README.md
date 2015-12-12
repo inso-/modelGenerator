@@ -1,7 +1,7 @@
 # modelGenerator
 
-Tired to loose time to create all you model object class, stop loosing your time !  
-Generate it from your database in only 2 minutes !  
+Tired to loose time to create all your model object class, stop loosing your time !  
+Generate it directly from your database in only 2 minutes !  
 
 Source (Type of Database) supported: 
 
@@ -16,12 +16,12 @@ Destination (Language of Generated Object) avalaible:
 - Swift (.swift)
 
 Dependencies:  
-- Python
+- python
 - virtualenv
 
 OS Supported:  
-- UNIX(OSX)/LINUX
-- WINDOWS
+- unix(osx)/linux
+- windows
 
 Easy to Use: 
 
