@@ -4,8 +4,7 @@ from PromptUtils import *
 def getTypeJava(varType):
     if "ForeignKey" in varType :
         typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
-#        codeImport = "@import \"" + typeConverted + ".h\"" + "\n"
-        return typeConverted, "new " + typeConverted + "(object.optJSONObject",
+        return typeConverted, "new " + typeConverted + "(data.optJSONObject",
     
     typeTable = { "models.CharField" : "String",
                   "models.TextField" : "int",
@@ -20,21 +19,21 @@ def getTypeJava(varType):
 
     typeConverted = typeTable.get(varType)
 
-    jsontypeTable = { "models.CharField" : "object.optString",
-                      "models.TextField" : "object.optString",
-                      "models.IntegerField" : "object.optInt",
-                      "models.DecimalField": "object.optInt",
-                      "models.PositiveSmallIntegerField" : "object.optString",
-                      "models.BigIntegerField" : "object.optLong",
-                      "models.BooleanField" : "object.optBoolean",
-                      "models.DateField" : "object.optString",
-                      "models.DateTimeField" : "object.optString",
+    jsontypeTable = { "models.CharField" : "data.optString",
+                      "models.TextField" : "data.optString",
+                      "models.IntegerField" : "data.optInt",
+                      "models.DecimalField": "data.optInt",
+                      "models.PositiveSmallIntegerField" : "data.optString",
+                      "models.BigIntegerField" : "data.optLong",
+                      "models.BooleanField" : "data.optBoolean",
+                      "models.DateField" : "data.optString",
+                      "models.DateTimeField" : "data.optString",
     }
     jsontypeConverted = jsontypeTable.get(varType)
     if typeConverted is None:
         print varType + " not found"
         return "tnt", "object.optInt"
-    return typeConverted , "data." + jsonTypeConverted
+    return typeConverted , "data." + jsontypeConverted
 
 def header():
     code = "//\n"
@@ -53,42 +52,49 @@ def generateJava(parsed, prompt=False, verbose=False):
         codeCor = ""
         codeImport = ""
         codeGetterSetter = ""
-        CodeConstruct = ""
-
-        codeImport += "import org.json.JSONException;\n"
-        codeimport += "import org.json.JSONObject;\n"
+        codeConstruct = ""
+        codeSerialize = ""
         
-        codeConstruct += "Public " + model.nameClass + "(){}\n\n"
+        codeImport += "import org.json.JSONException;\n"
+        codeImport += "import org.json.JSONObject;\n"
 
-        codeConstruct += "Public " + model.nameClass + "(JSONObject data){\n"
         codeCor += "public class " + model.nameClass + "{\n\n"
+        
+        codeConstruct += "\tPublic " + model.nameClass + "() {}\n\n"
+        codeConstruct += "\tPublic " + model.nameClass + "(JSONObject data) {\n"
 
+        codeSerialize += "\tPublic JSONObject toJSON() {\n\t\tJSONObject data = new JSONObject();\n\t\ttry {\n"
+        
         for varName, varType in  model.var.iteritems():
             typeVar, jsontypeVar = getTypeJava(varType)
-                
-#            if newImport != None:
-#                codeImport += newImport
+
+            if varName == "public" or varName == "private":
+                varName = "_" + varName
+            
             codeCor += "\tprivate " + typeVar + " " + varName + ";\n"
             codeGetterSetter += "\tpublic " + typeVar + " get" + varName.capitalize() + "() {\n\t\treturn " + varName + ";\n\t}\n\n"
             codeGetterSetter += "\tpublic void set" + varName.capitalize() + "(" + typeVar + " Param" + varName + ") {\n\t\t" + varName + " = Param" + varName + ";\n\t}\n\n"
-            codeConstruct += varName  + " = " jsontypeVar + "(\"" + varName + "\")"
-            if "(" in jsonTypeVar :
-                codeConstruct += ")"
-            codeConstruct += ";\n"
+            codeConstruct += "\t\t" + varName  + " = " + jsontypeVar + "(\"" + varName + "\")"
+            if "(" in jsontypeVar :
+                codeConstruct += ");\n"
+                codeSerialize += "\t\t\tif (" + varName + " != null)\n"
+                codeSerialize += "\t\t\t\tdata.put(\"" + varName + "\", " + varName + ".toJSON());\n "
+            else:
+                codeSerialize += "\t\t\tdata.put(\"" + varName + "\", " + varName + ");\n "
+                codeConstruct += ";\n"
+        
         codeCor += "\n"
-
-        
-        
-        codeConstruct +="}\n"
-        
-
+        codeSerialize += "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
+        codeConstruct += "\t}\n"
+        codeGetterSetter += "\t}\n"
         
         code += header() + "\n"
         code += codeImport + "\n"
         code += codeCor + "\n"
         code += codeConstruct + "\n"
-        code += codeGetterSetter + "}\n"
-
+        code += codeSerialize + "\n"
+        code += codeGetterSetter + "\n"
+        
             
         javaObject.write(code)
 

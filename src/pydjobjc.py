@@ -43,10 +43,8 @@ def generateObjc(parsed, prompt=False, verbose=False):
         codeCor += "@interface " + model.nameClass + " : " + "NSObject\n\n"
         for varName, varType in  model.var.iteritems():
             typeVar, newImport = getTypeObjc(varType)
-            if varName == "id":
-                varName = "_id"
-            elif varName == "description":
-                varName = "_description"
+            if varName == "id" or varName == "description":
+                varName = "_" + varName
                 
             if newImport != None:
                 codeImport += newImport 
