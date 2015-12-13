@@ -14,7 +14,7 @@ def configure_generate_settings():
             else:
                         swift_1 = False;
             java = query_yes_no("Generate all models in Java")
-            if (swift is False):
+            if (java is False):
                         java_1 = query_yes_no("For each models prompt confirm generate in Java")
             else:
                         java_1 = False;
@@ -40,7 +40,7 @@ def configure_generate_settings():
                         code += "JAVA = 1\n"
             else:
                         code += "JAVA = 0\n"
-            if (java):
+            if (java_1):
                         code += "JAVA_PROMPT = 1\n"
             else:
                         code += "JAVA_PROMPT = 0\n"

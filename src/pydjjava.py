@@ -5,7 +5,7 @@ def getTypeJava(varType):
     if "ForeignKey" in varType :
         typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
 #        codeImport = "@import \"" + typeConverted + ".h\"" + "\n"
-        return typeConverted, None#codeImport
+        return typeConverted, "new " + typeConverted + "(object.optJSONObject",
     
     typeTable = { "models.CharField" : "String",
                   "models.TextField" : "int",
@@ -13,15 +13,28 @@ def getTypeJava(varType):
                   "models.DecimalField": "int",
                   "models.PositiveSmallIntegerField" : "int",
                   "models.BigIntegerField" : "long",
-                  "models.BooleanField" : "bool",
+                  "models.BooleanField" : "boolean",
                   "models.DateField" : "String",
                   "models.DateTimeField" : "String",
     }
+
     typeConverted = typeTable.get(varType)
+
+    jsontypeTable = { "models.CharField" : "object.optString",
+                      "models.TextField" : "object.optString",
+                      "models.IntegerField" : "object.optInt",
+                      "models.DecimalField": "object.optInt",
+                      "models.PositiveSmallIntegerField" : "object.optString",
+                      "models.BigIntegerField" : "object.optLong",
+                      "models.BooleanField" : "object.optBoolean",
+                      "models.DateField" : "object.optString",
+                      "models.DateTimeField" : "object.optString",
+    }
+    jsontypeConverted = jsontypeTable.get(varType)
     if typeConverted is None:
         print varType + " not found"
-        return "NSInteger", None
-    return typeConverted , None
+        return "tnt", "object.optInt"
+    return typeConverted , "data." + jsonTypeConverted
 
 def header():
     code = "//\n"
@@ -40,25 +53,41 @@ def generateJava(parsed, prompt=False, verbose=False):
         codeCor = ""
         codeImport = ""
         codeGetterSetter = ""
+        CodeConstruct = ""
 
+        codeImport += "import org.json.JSONException;\n"
+        codeimport += "import org.json.JSONObject;\n"
+        
+        codeConstruct += "Public " + model.nameClass + "(){}\n\n"
+
+        codeConstruct += "Public " + model.nameClass + "(JSONObject data){\n"
         codeCor += "public class " + model.nameClass + "{\n\n"
+
         for varName, varType in  model.var.iteritems():
-            typeVar, newImport = getTypeJava(varType)
+            typeVar, jsontypeVar = getTypeJava(varType)
                 
 #            if newImport != None:
 #                codeImport += newImport
             codeCor += "\tprivate " + typeVar + " " + varName + ";\n"
             codeGetterSetter += "\tpublic " + typeVar + " get" + varName.capitalize() + "() {\n\t\treturn " + varName + ";\n\t}\n\n"
             codeGetterSetter += "\tpublic void set" + varName.capitalize() + "(" + typeVar + " Param" + varName + ") {\n\t\t" + varName + " = Param" + varName + ";\n\t}\n\n"
+            codeConstruct += varName  + " = " jsontypeVar + "(\"" + varName + "\")"
+            if "(" in jsonTypeVar :
+                codeConstruct += ")"
+            codeConstruct += ";\n"
         codeCor += "\n"
 
-        codeCor += "Public " + model.nameClass + "(){}\n\n"
+        
+        
+        codeConstruct +="}\n"
+        
 
-        codeCor += codeGetterSetter + "}\n"
         
         code += header() + "\n"
         code += codeImport + "\n"
-        code += codeCor
+        code += codeCor + "\n"
+        code += codeConstruct + "\n"
+        code += codeGetterSetter + "}\n"
 
             
         javaObject.write(code)

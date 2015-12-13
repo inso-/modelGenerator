@@ -4,3 +4,5 @@ rm -rf env
 rm -rf ModelGenerator
 rm -rf output
 rm src/settings.py
+rm src/*~
+rm src/*.pyc
