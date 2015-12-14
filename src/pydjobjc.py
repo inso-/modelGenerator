@@ -38,6 +38,7 @@ def generateObjc(parsed, prompt=False, verbose=False):
         
         code = ""
         codeCor = ""
+        
         codeImport = ""
 
         codeCor += "@interface " + model.nameClass + " : " + "NSObject\n\n"

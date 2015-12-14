@@ -33,7 +33,7 @@ def getTypeJava(varType):
     if typeConverted is None:
         print varType + " not found"
         return "tnt", "object.optInt"
-    return typeConverted , "data." + jsontypeConverted
+    return typeConverted , jsontypeConverted
 
 def header():
     code = "//\n"
@@ -60,10 +60,10 @@ def generateJava(parsed, prompt=False, verbose=False):
 
         codeCor += "public class " + model.nameClass + "{\n\n"
         
-        codeConstruct += "\tPublic " + model.nameClass + "() {}\n\n"
-        codeConstruct += "\tPublic " + model.nameClass + "(JSONObject data) {\n"
+        codeConstruct += "\tpublic " + model.nameClass + "() {}\n\n"
+        codeConstruct += "\tpublic " + model.nameClass + "(JSONObject data) {\n"
 
-        codeSerialize += "\tPublic JSONObject toJSON() {\n\t\tJSONObject data = new JSONObject();\n\t\ttry {\n"
+        codeSerialize += "\tpublic JSONObject toJSON() {\n\t\tJSONObject data = new JSONObject();\n\t\ttry {\n"
         
         for varName, varType in  model.var.iteritems():
             typeVar, jsontypeVar = getTypeJava(varType)
@@ -86,7 +86,7 @@ def generateJava(parsed, prompt=False, verbose=False):
         codeCor += "\n"
         codeSerialize += "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
         codeConstruct += "\t}\n"
-        codeGetterSetter += "\t}\n"
+        codeGetterSetter += "}\n"
         
         code += header() + "\n"
         code += codeImport + "\n"

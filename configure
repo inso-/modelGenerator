@@ -18,6 +18,11 @@ def configure_generate_settings():
                         java_1 = query_yes_no("For each models prompt confirm generate in Java")
             else:
                         java_1 = False;
+            csharp = query_yes_no("Generate all models in C#")
+            if (csharp is False):
+                        csharp_1 = query_yes_no("For each models prompt confirm generate in C#")
+            else:
+                        csharp_1 = False;
             settings = open("src/settings.py", "w")
             code = ""
             if (objc):
@@ -44,6 +49,14 @@ def configure_generate_settings():
                         code += "JAVA_PROMPT = 1\n"
             else:
                         code += "JAVA_PROMPT = 0\n"
+            if (csharp):
+                        code += "CSHARP = 1\n"
+            else:
+                        code += "CSHARP = 0\n"
+            if (csharp_1):
+                        code += "CSHARP_PROMPT = 1\n"
+            else:
+                        code += "CSHARP_PROMPT = 0\n"
             settings.write(code)
 
 def getEngineByDB(database):

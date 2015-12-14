@@ -4,6 +4,7 @@ from ParsePyModel import *
 from pydjobjc import *
 from pydjswift import *
 from pydjjava import *
+from pydjcsharp import *
 import sys
 
 def main():
@@ -28,5 +29,7 @@ def main():
         generateSwift(n.parsed, SWIFT_PROMPT, verbose)
     if (JAVA or JAVA_PROMPT):
         generateJava(n.parsed, JAVA_PROMPT, verbose)
+    if (CSHARP or CSHARP_PROMPT):
+        generateCsharp(n.parsed, CSHARP_PROMPT, verbose)
 
 main()

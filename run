@@ -3,4 +3,4 @@
 source env/bin/activate
 ./ModelGenerator/manage.py inspectdb >> out.py
 python src/main.py out.py -v
-rm out.py
+mv out.py output/modelsDjango.py
