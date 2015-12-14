@@ -1,63 +1,24 @@
 #!/usr/bin/env python
-import sys
-from src.PromptUtils import *
+from src.language import *
+
 
 def configure_generate_settings():
-            objc = query_yes_no("Generate all models in Obj-C")
-            if (objc is False):
-                        objc_1 = query_yes_no("For each models prompt confirm generate in Obj-C")
-            else:
-                        objc_1 = False;
-            swift = query_yes_no("Generate all models in Swift")
-            if (swift is False):
-                        swift_1 = query_yes_no("For each models prompt confirm generate in Swift")
-            else:
-                        swift_1 = False;
-            java = query_yes_no("Generate all models in Java")
-            if (java is False):
-                        java_1 = query_yes_no("For each models prompt confirm generate in Java")
-            else:
-                        java_1 = False;
-            csharp = query_yes_no("Generate all models in C#")
-            if (csharp is False):
-                        csharp_1 = query_yes_no("For each models prompt confirm generate in C#")
-            else:
-                        csharp_1 = False;
-            settings = open("src/settings.py", "w")
             code = ""
-            if (objc):
-                        code += "OBJC = 1\n"
-            else:
-                        code += "OBJC = 0\n"
-            if (objc_1):
-                        code += "OBJC_PROMPT = 1\n"
-            else:
-                        code += "OBJC_PROMPT = 0\n"
-            if (swift):
-                        code += "SWIFT = 1\n"
-            else:
-                        code += "SWIFT = 0\n"
-            if (swift_1):
-                        code += "SWIFT_PROMPT = 1\n"
-            else:
-                        code += "SWIFT_PROMPT = 0\n"
-            if (java):
-                        code += "JAVA = 1\n"
-            else:
-                        code += "JAVA = 0\n"
-            if (java_1):
-                        code += "JAVA_PROMPT = 1\n"
-            else:
-                        code += "JAVA_PROMPT = 0\n"
-            if (csharp):
-                        code += "CSHARP = 1\n"
-            else:
-                        code += "CSHARP = 0\n"
-            if (csharp_1):
-                        code += "CSHARP_PROMPT = 1\n"
-            else:
-                        code += "CSHARP_PROMPT = 0\n"
+            for lang in language:
+                todo = query_yes_no("Generate all models in %s" % lang.capitalize())
+                if todo:
+                    code += lang.upper() + " = 1\n"
+                    code += lang.upper() + "_PROMPT = 0\n"
+                else:
+                    code += lang.upper() + " = 0\n"
+                    todo = query_yes_no("For each models prompt confirm generate in %s" % lang.capitalize())
+                    if todo:
+                        code += lang.upper() + "_PROMPT = 1\n"
+                    else:
+                        code += lang.upper() + "_PROMPT = 0\n"
+            settings = open("src/settings.py", "w")
             settings.write(code)
+
 
 def getEngineByDB(database):
             typeTable = { "sqlite3" : "django.db.backends.sqlite3",

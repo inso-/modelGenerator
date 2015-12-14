@@ -5,7 +5,7 @@ from pydjgenerator import *
 class swift(CodeGenerator):
 
     def __init__(self):
-        super.__init__(self)
+        CodeGenerator.__init__(self)
         self.extensien_file_out = ".swift"
         self.defaultType = "Int"
         self.include_foreign = True

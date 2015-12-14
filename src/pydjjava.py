@@ -5,7 +5,7 @@ from pydjgenerator import CodeGenerator
 class java(CodeGenerator):
 
     def __init__(self):
-        super.__init__(self)
+        CodeGenerator.__init__(self)
         self.implem_out = False
         self.extensien_file_out = ".java"
         self.defaultType = "int"

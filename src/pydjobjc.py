@@ -5,7 +5,7 @@ from pydjgenerator import CodeGenerator
 class objc(CodeGenerator):
 
     def __init__(self):
-        super.__init__(self)
+        CodeGenerator.__init__(self)
         self.implem_out = True
         self.extensien_file_out = ".h"
         self.extensien_implem_out = ".m"

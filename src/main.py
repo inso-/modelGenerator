@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-from settings import *
 from ParsePyModel import *
-from pydjobjc import *
-from pydjswift import *
-from pydjjava import *
-from pydjcsharp import *
+from language import *
+from settings import *
 import sys
+
 
 def main():
     verbose = False
@@ -21,15 +19,16 @@ def main():
     else:
         print("Usage:\n\t\t./" + __file__ + " PyModelFile\n\t\t -v Verbose Mode")
         return
+
     n = ParsePyModel(fileName)
     n.parse()
-    if (OBJC or OBJC_PROMPT):
-        objc().generate(n.parsed, OBJC_PROMPT, verbose)
-    if (SWIFT or SWIFT_PROMPT):
-        swift().generate(n.parsed, SWIFT_PROMPT, verbose)
-    if (JAVA or JAVA_PROMPT):
-        java().generate(n.parsed, JAVA_PROMPT, verbose)
-    if (CSHARP or CSHARP_PROMPT):
-        csharp().generate(n.parsed, CSHARP_PROMPT, verbose)
+
+    for lang in language:
+        klass = globals()[lang]
+
+        toGenerate = globals()[lang.upper()]
+        prompt = globals()[lang.upper() + "_PROMPT"]
+        if (toGenerate == 1 or prompt == 1):
+            klass().generate(n.parsed, prompt, verbose)
 
 main()

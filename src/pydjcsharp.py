@@ -5,7 +5,7 @@ from pydjgenerator import *
 class csharp(CodeGenerator):
 
     def __init__(self):
-        super.__init__(self)
+        CodeGenerator.__init__(self)
         self.extensien_file_out = ".cs"
         self.defaultType = "int"
         self.include_foreign = False
