@@ -24,12 +24,12 @@ def main():
     n = ParsePyModel(fileName)
     n.parse()
     if (OBJC or OBJC_PROMPT):
-        generateObjc(n.parsed, OBJC_PROMPT, verbose)
+        objc().generate(n.parsed, OBJC_PROMPT, verbose)
     if (SWIFT or SWIFT_PROMPT):
-        generateSwift(n.parsed, SWIFT_PROMPT, verbose)
+        swift().generate(n.parsed, SWIFT_PROMPT, verbose)
     if (JAVA or JAVA_PROMPT):
-        generateJava(n.parsed, JAVA_PROMPT, verbose)
+        java().generate(n.parsed, JAVA_PROMPT, verbose)
     if (CSHARP or CSHARP_PROMPT):
-        generateCsharp(n.parsed, CSHARP_PROMPT, verbose)
+        csharp().generate(n.parsed, CSHARP_PROMPT, verbose)
 
 main()

@@ -1,10 +1,11 @@
 from DjangoModel import *
 
+
 class ParsePyModel:
     pyFile = None
     inClass = False
     inMeta = False
-    ClassName = ""
+    className = ""
     parsed = []
     tmpModel = DjangoModel()
 
@@ -15,11 +16,13 @@ class ParsePyModel:
         self.inMeta = False
         self.ClassName = ""
         self.tmpModel = DjangoModel()
+        self.varType = None
+        self.varName = None
 
     def parse(self):
         for line in self.pyFile.readlines():
             if line[0:5] == "class":
-                if self.inClass == True:
+                if self.inClass:
                     self.parsed.append(self.tmpModel)
                     self.inMeta = False;
                     self.tmpModel = DjangoModel()
@@ -32,7 +35,7 @@ class ParsePyModel:
             if "Meta" in line:
                 self.inMeta = True;
 
-            if self.inClass == True and self.inMeta == False and "=" in line:
+            if self.inClass and not self.inMeta and "=" in line:
                 self.varName = line.split("=")[0].replace(" ", "")
                 if "ForeignKey" in line:
                     self.varType = line.split("=")[1].split(",")[0].replace(" ", "").replace("\n", "")

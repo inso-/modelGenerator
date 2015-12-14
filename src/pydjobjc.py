@@ -1,81 +1,30 @@
 #!/usr/bin/env python
-from PromptUtils import *
+from pydjgenerator import CodeGenerator
 
-def getTypeObjc(varType):
-    if "ForeignKey" in varType :
-        typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
-        codeImport = "@import \"" + typeConverted + ".h\"" + "\n"
-        return typeConverted, codeImport
-    
-    typeTable = { "models.CharField" : "NSString",
-                  "models.TextField" : "NSString",
-                  "models.IntegerField" : "NSInteger",
-                  "models.DecimalField": "NSInteger",
-                  "models.PositiveSmallIntegerField" : "NSInteger",
-                  "models.BigIntegerField" : "NSInteger",
-                  "models.BooleanField" : "NSInteger",
-                  "models.DateField" : "NSDate",
-                  "models.DateTimeField" : "NSDate",
-    }
-    typeConverted = typeTable.get(varType)
-    if typeConverted is None:
-        print varType + " not found"
-        return "NSInteger", None
-    return typeConverted , None
 
-def header():
-    code = "//\n"
-    code += "//   Generate By modelGenerator\n"
-    code += "//   https://github.com/inso-/modelGenerator\n"
-    code += "//\n"
-    return code
+class objc(CodeGenerator):
 
-def generateObjc(parsed, prompt=False, verbose=False):
-    for model in parsed:
-        if prompt and not query_yes_no("generate " + model.nameClass + " ?"):
-            continue
-        objcHeader = open("output/" + model.nameClass + ".h", "w")
-        
-        code = ""
-        codeCor = ""
-        
-        codeImport = ""
-
-        codeCor += "@interface " + model.nameClass + " : " + "NSObject\n\n"
-        for varName, varType in  model.var.iteritems():
-            typeVar, newImport = getTypeObjc(varType)
-            if varName == "id" or varName == "description":
-                varName = "_" + varName
-                
-            if newImport != None:
-                codeImport += newImport 
-            codeCor += "@property(nonatomic, strong) " + typeVar + " *" + varName + ";\n"
-        codeCor += "\n@end"
-
-        code += header() + "\n"
-        code += codeImport + "\n"
-        code += codeCor
-
-            
-        objcHeader.write(code)
-
-        if verbose:
-            print "Generate output/" + model.nameClass + ".h"
-
-        objcClass = open("output/" + model.nameClass + ".m", "w")
-        code = ""
-        codeCor = ""
-        codeImport = ""
-
-        codeImport += "@import \"" + model.nameClass + ".h\"" + "\n"
-        codeCor += "@implementation " + model.nameClass 
-        codeCor += "\n@end"
-
-        code += header() + "\n"
-        code += codeImport + "\n"
-        code += codeCor
-
-        objcClass.write(code)
-        
-        if verbose:
-            print "Generate output/" + model.nameClass + ".m"
+    def __init__(self):
+        super.__init__(self)
+        self.implem_out = True
+        self.extensien_file_out = ".h"
+        self.extensien_implem_out = ".m"
+        self.defaultType = "NSInteger"
+        self.include_foreign = True
+        self.classTemplate = "@interface %s : NSObject\n\n"
+        self.classCloser = "@end"
+        self.commentSyntax = "//"
+        self.classVariableTemplate = "@property(nonatomic, strong) %s *%s;\n"
+        self.includeTemplate = "@import \"%s" + self.extensien_file_out + "\"\n"
+        self.implemTemplate = "@implementation %s"
+        self.typeTable = {
+            "CharField": "NSString",
+            "TextField": "NSString",
+            "IntegerField": "NSInteger",
+            "DecimalField": "NSInteger",
+            "PositiveSmallIntegerField": "NSInteger",
+            "BigIntegerField": "NSInteger",
+            "BooleanField": "NSInteger",
+            "DateField": "NSDate",
+            "DateTimeField": "NSDate",
+        }

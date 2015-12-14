@@ -1,102 +1,57 @@
 #!/usr/bin/env python
-from PromptUtils import *
+from pydjgenerator import CodeGenerator
 
-def getTypeJava(varType):
-    if "ForeignKey" in varType :
-        typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
-        return typeConverted, "new " + typeConverted + "(data.optJSONObject",
-    
-    typeTable = { "models.CharField" : "String",
-                  "models.TextField" : "int",
-                  "models.IntegerField" : "int",
-                  "models.DecimalField": "int",
-                  "models.PositiveSmallIntegerField" : "int",
-                  "models.BigIntegerField" : "long",
-                  "models.BooleanField" : "boolean",
-                  "models.DateField" : "String",
-                  "models.DateTimeField" : "String",
-    }
 
-    typeConverted = typeTable.get(varType)
+class java(CodeGenerator):
 
-    jsontypeTable = { "models.CharField" : "data.optString",
-                      "models.TextField" : "data.optString",
-                      "models.IntegerField" : "data.optInt",
-                      "models.DecimalField": "data.optInt",
-                      "models.PositiveSmallIntegerField" : "data.optString",
-                      "models.BigIntegerField" : "data.optLong",
-                      "models.BooleanField" : "data.optBoolean",
-                      "models.DateField" : "data.optString",
-                      "models.DateTimeField" : "data.optString",
-    }
-    jsontypeConverted = jsontypeTable.get(varType)
-    if typeConverted is None:
-        print varType + " not found"
-        return "tnt", "object.optInt"
-    return typeConverted , jsontypeConverted
-
-def header():
-    code = "//\n"
-    code += "//   Generate By modelGenerator\n"
-    code += "//   https://github.com/inso-/modelGenerator\n"
-    code += "//\n"
-    return code
-
-def generateJava(parsed, prompt=False, verbose=False):
-    for model in parsed:
-        if prompt and not query_yes_no("generate " + model.nameClass + " ?"):
-            continue
-        javaObject = open("output/" + model.nameClass + ".java", "w")
-        
-        code = ""
-        codeCor = ""
-        codeImport = ""
-        codeGetterSetter = ""
-        codeConstruct = ""
-        codeSerialize = ""
-        
-        codeImport += "import org.json.JSONException;\n"
-        codeImport += "import org.json.JSONObject;\n"
-
-        codeCor += "public class " + model.nameClass + "{\n\n"
-        
-        codeConstruct += "\tpublic " + model.nameClass + "() {}\n\n"
-        codeConstruct += "\tpublic " + model.nameClass + "(JSONObject data) {\n"
-
-        codeSerialize += "\tpublic JSONObject toJSON() {\n\t\tJSONObject data = new JSONObject();\n\t\ttry {\n"
-        
-        for varName, varType in  model.var.iteritems():
-            typeVar, jsontypeVar = getTypeJava(varType)
-
-            if varName == "public" or varName == "private":
-                varName = "_" + varName
-            
-            codeCor += "\tprivate " + typeVar + " " + varName + ";\n"
-            codeGetterSetter += "\tpublic " + typeVar + " get" + varName.capitalize() + "() {\n\t\treturn " + varName + ";\n\t}\n\n"
-            codeGetterSetter += "\tpublic void set" + varName.capitalize() + "(" + typeVar + " Param" + varName + ") {\n\t\t" + varName + " = Param" + varName + ";\n\t}\n\n"
-            codeConstruct += "\t\t" + varName  + " = " + jsontypeVar + "(\"" + varName + "\")"
-            if "(" in jsontypeVar :
-                codeConstruct += ");\n"
-                codeSerialize += "\t\t\tif (" + varName + " != null)\n"
-                codeSerialize += "\t\t\t\tdata.put(\"" + varName + "\", " + varName + ".toJSON());\n "
-            else:
-                codeSerialize += "\t\t\tdata.put(\"" + varName + "\", " + varName + ");\n "
-                codeConstruct += ";\n"
-        
-        codeCor += "\n"
-        codeSerialize += "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
-        codeConstruct += "\t}\n"
-        codeGetterSetter += "}\n"
-        
-        code += header() + "\n"
-        code += codeImport + "\n"
-        code += codeCor + "\n"
-        code += codeConstruct + "\n"
-        code += codeSerialize + "\n"
-        code += codeGetterSetter + "\n"
-        
-            
-        javaObject.write(code)
-
-        if verbose:
-            print "Generate output/" + model.nameClass + ".java"
+    def __init__(self):
+        super.__init__(self)
+        self.implem_out = False
+        self.extensien_file_out = ".java"
+        self.defaultType = "int"
+        self.include_foreign = True
+        self.getter_setter = True
+        self.construct = True
+        self.serialize = True
+        self.classTemplate = "public class %s{\n\n"
+        self.classCloser = "}"
+        self.commentSyntax = "//"
+        self.classVariableTemplate = "\tprivate %s %s;\n"
+        self.includeTemplate = "@import \"%s" + self.extensien_file_out + "\"\n"
+        self.implemTemplate = "@implementation %s"
+        self.codeGenericInclude = "import org.json.JSONException;\nimport org.json.JSONObject;\n"
+        self.defaultConstructTemplate = "\tpublic %s() {}\n\n"
+        self.jsonConstructTemplate = "\tpublic %s(JSONObject data) {\n"
+        self.serializeTemplate =  "\tpublic JSONObject toJSON() {\n\t\tJSONObject data = new JSONObject();\n\t\ttry {\n"
+        self.serializeCorTemplate = "\t\t\tdata.put(\"%s\", %s);\n "
+        self.serializeClose = "\t\t}\n"
+        self.foreignKeySerializeTemplate = "\t\t\t\tdata.put(\"%s\", %s.toJSON());\n "
+        self.serializeConditionTemplate = "\t\t\tif (%s != null)\n"
+        self.jsonConstructCorTemplate = "\t\t%s = %s(\"%s\")"
+        self.jsonConstructCorClose = ";\n"
+        self.jsonConstructCorCloseForeign = ");\n"
+        self.jsonConstructClose = "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
+        self.getterTemplate = "\tpublic %s get%s() {\n\t\treturn %s;\n\t}\n\n"
+        self.setterTemplate = "\tpublic void set%s(%s Param%s) {\n\t\t%s = Param%s;\n\t}\n\n"
+        self.typeTable = {
+            "CharField": "String",
+            "TextField": "String",
+            "IntegerField": "int",
+            "DecimalField": "int",
+            "PositiveSmallIntegerField": "int",
+            "BigIntegerField": "long",
+            "BooleanField": "boolean",
+            "DateField": "String",
+            "DateTimeField": "String",
+        }
+        self.jsontypetable =  {
+            "CharField": "optString",
+            "TextField": "optString",
+            "IntegerField": "optInt",
+            "DecimalField": "optInt",
+            "PositiveSmallIntegerField": "optInt",
+            "BigIntegerField": "optLong",
+            "BooleanField": "optBoolean",
+            "DateField": "optString",
+            "DateTimeField": "optString",
+        }
