@@ -3,12 +3,13 @@
 Tired to loose time to create all your model object class, stop loosing your time !  
 Generate it directly from your database in only 2 minutes !  
 
-Source (Type of Database) supported: 
+Source (Type of Database/file) supported: 
 
 - mysql
 - postgresql
 - sqlite3
 - oracle
+- JSON
 
 Destination (Language of Generated Object) avalaible: 
 
