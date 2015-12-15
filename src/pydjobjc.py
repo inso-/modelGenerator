@@ -27,4 +27,5 @@ class objc(CodeGenerator):
             "BooleanField": "NSInteger",
             "DateField": "NSDate",
             "DateTimeField": "NSDate",
+            "ListField": "NSMutableArray",
         }

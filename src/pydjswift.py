@@ -24,4 +24,5 @@ class swift(CodeGenerator):
             "BooleanField": "Bool",
             "DateField": "Date",
             "DateTimeField": "Date",
+            "ListField": "Array = [Int]()",
         }

@@ -11,7 +11,7 @@ class cpp(CodeGenerator):
         self.extensien_implem_out = ".cpp"
         self.defaultType = "int"
         self.include_foreign = True
-        self.classTemplate = "class %s\n{\n"
+        self.classTemplate = "class %s : public class model\n{\n"
         self.classCloser = "}"
         self.commentSyntax = "//"
         self.classVariableTemplate = "public : %s %s;\n"
@@ -27,4 +27,5 @@ class cpp(CodeGenerator):
             "BooleanField": "bool",
             "DateField": "date",
             "DateTimeField": "date",
+            "ListField": "list<model>",
         }

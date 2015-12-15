@@ -42,46 +42,60 @@ def find_sub(the_list, substring):
             return -1
 
 def configure_database_settings():
-            res = query_multiple("Database Type", ["sqlite3", "mysql", "oracle", "postgresql", "postgresql_psycopg2"], default=["mysql"])
-            if (res != "sqlite3"):
-                        ip = query("Database IP", False, "127.0.0.1")
-                        port = query("Database Port", False, "1234")
-                        user = query("Database User", False, "Admin")
-                        name = query("Database Name")
-                        password = query("Database Password", True)
-            else:
-                        import os
+            res = query_multiple("Database Type", ["sqlite3", "mysql", "oracle", "postgresql", "postgresql_psycopg2", "json"], default=["mysql"])
+            if (res == "sqlite3") or (res == "json"):
+                    import os
+                    if res is "sqlite3":
                         path = query("Sqlite3 file path", False, os.getcwd() + "/db.sqlite3")
-            code = "# Database\n # https://docs.djangoproject.com/en/1.9/ref/settings/#databases\n\n"
-                        
-            code += "DATABASES = {\n\t'default': {\n"
-
-            code += "\t\t'ENGINE' : '" + getEngineByDB(res) + "',\n"
-            if (res == "sqlite3"):
-                        code += "\t\t'NAME': '" + path + "',\n"
+                    else:
+                        path = query("JSON file path", False, os.getcwd() + "/data.json")
             else:
-                        code += "\t\t'NAME': '" + name + "',\n"
-                        code += "\t\t'USER': '" + user + "',\n"
-                        code += "\t\t'PASSWORD': '" + password + "',\n"
-                        code += "\t\t'HOST': '" + ip + "',\n"
-                        code += "\t\t'PORT': '" + port + "',\n"
-                        
-            code += "\t\t}\n\t}\n"
-            localSettings = open("ModelGenerator/ModelGenerator/local_settings.py", "w")
-            localSettings.write(code)
+                    ip = query("Database IP", False, "127.0.0.1")
+                    port = query("Database Port", False, "1234")
+                    user = query("Database User", False, "Admin")
+                    name = query("Database Name")
+                    password = query("Database Password", True)
+            if res != "json":
+                code = "# Database\n # https://docs.djangoproject.com/en/1.9/ref/settings/#databases\n\n"
 
-            settings = open("ModelGenerator/ModelGenerator/settings.py", "r+")
-            content = settings.read()
-            settings = open("ModelGenerator/ModelGenerator/settings.py", "w")
+                code += "DATABASES = {\n\t'default': {\n"
 
-            if "DATABASES" in content:
-                        tmp = content.split('\n')
-                        a = find_sub(tmp, "DATABASES")
-                        del tmp[a-3:a+6]
-                        content = "\n".join(tmp)
-            if "local_settings.py" not in content:
-                        content += "\nfrom local_settings import *"
-            settings.write(content)
+                code += "\t\t'ENGINE' : '" + getEngineByDB(res) + "',\n"
+                if (res == "sqlite3"):
+                            code += "\t\t'NAME': '" + path + "',\n"
+                else:
+                            code += "\t\t'NAME': '" + name + "',\n"
+                            code += "\t\t'USER': '" + user + "',\n"
+                            code += "\t\t'PASSWORD': '" + password + "',\n"
+                            code += "\t\t'HOST': '" + ip + "',\n"
+                            code += "\t\t'PORT': '" + port + "',\n"
+
+                code += "\t\t}\n\t}\n"
+                localSettings = open("ModelGenerator/ModelGenerator/local_settings.py", "w")
+                localSettings.write(code)
+
+                settings = open("ModelGenerator/ModelGenerator/settings.py", "r+")
+                content = settings.read()
+                settings = open("ModelGenerator/ModelGenerator/settings.py", "w")
+
+                if "DATABASES" in content:
+                            tmp = content.split('\n')
+                            a = find_sub(tmp, "DATABASES")
+                            del tmp[a-3:a+6]
+                            content = "\n".join(tmp)
+                if "local_settings.py" not in content:
+                            content += "\nfrom local_settings import *"
+                settings.write(content)
+
+
+            settings = open("run", "w")
+            codeDB = "#!/bin/sh\n\nsource env/bin/activate\n./ModelGenerator/manage.py inspectdb >> out.py\npython src/main.py out.py -v\nmv out.py output/modelsDjango.py\n"
+            codeJSON = "#!/bin/sh\n\nsource env/bin/activate\npython src/main.py %s -v\n" % path
+
+            if (res == "json"):
+                settings.write(codeJSON)
+            else:
+                settings.write(codeDB)
 
 def main():
            if len(sys.argv) == 1:

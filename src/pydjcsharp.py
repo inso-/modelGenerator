@@ -9,7 +9,7 @@ class csharp(CodeGenerator):
         self.extensien_file_out = ".cs"
         self.defaultType = "int"
         self.include_foreign = False
-        self.classTemplate = "public class %s\n{\n"
+        self.classTemplate = "public class %s : model\n{\n"
         self.classCloser = "}"
         self.commentSyntax = "//"
         self.classVariableTemplate = "\tpublic %s %s { get; set; }\n"
@@ -24,4 +24,5 @@ class csharp(CodeGenerator):
             "BooleanField": "bool",
             "DateField": "DateTime",
             "DateTimeField": "DateTime",
+            "ListField": "list<model>",
         }

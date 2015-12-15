@@ -67,6 +67,7 @@ class CodeGenerator():
         if "ForeignKey" in varType:
             typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
             return  "new " + typeConverted + "(data.optJSONObject",
+        varType = varType.replace("models.", "")
         jsonConverter = self.jsontypeTable.get(varType)
         if jsonConverter is None:
             print varType + " jsonAdapter not found"
@@ -101,8 +102,10 @@ class CodeGenerator():
         self.codeGetterSetter += self.getterTemplate % (typeVar, varName.capitalize(), varName)
         self.codeGetterSetter += self.setterTemplate % (varName.capitalize(), typeVar, varName, varName, varName)
 
-    def generateConstruct(self, varName, varType):
+    def generateConstruct(self, varType, varName):
         jsontypeVar = self.getJsonType(varType)
+ #       if "List" in varType:
+ #           return
         self.codeConstruct += self.jsonConstructCorTemplate % (varName, jsontypeVar, varName)
         if "(" in jsontypeVar:
             self.codeConstruct += self.jsonContructCorCloseForeign
@@ -110,8 +113,9 @@ class CodeGenerator():
             self.codeConstruct += self.jsonConstructCorClose
 
     def generateSerialize(self, varType, varName):
-        jsontypeVar = self.getJsonType(varType)
-        if "(" in jsontypeVar:
+#        if "List" in varType:
+#            return
+        if "foreign" in varType:
                 self.codeSerialize += self.serializeConditionTemplate % (varName, varName)
                 self.codeSerialize += self.foreignKeySerializeTemplate % varName
         else:

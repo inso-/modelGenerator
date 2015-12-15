@@ -43,8 +43,9 @@ class java(CodeGenerator):
             "BooleanField": "boolean",
             "DateField": "String",
             "DateTimeField": "String",
+            "ListField": "List<Object>",
         }
-        self.jsontypetable =  {
+        self.jsontypeTable =  {
             "CharField": "optString",
             "TextField": "optString",
             "IntegerField": "optInt",
@@ -54,4 +55,5 @@ class java(CodeGenerator):
             "BooleanField": "optBoolean",
             "DateField": "optString",
             "DateTimeField": "optString",
+            "ListField": "optJSONArray"
         }
