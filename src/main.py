@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from ParsePyModel import *
-from ParseJson import *
+import sys, inspect
+from settings import  *
+from parser.ParsePyModel import ParsePyModel
+from parser.ParseJson import ParseJson
 from language import *
-from settings import *
-import sys
+from language.language import language as planguage
 
 
 def main():
@@ -31,12 +32,15 @@ def main():
         print("Usage:\n\t\t./" + __file__ + " [PyModel or json InputFile] \n\t\t -v Verbose Mode")
         return
 
-    for lang in language:
-        klass = globals()[lang]
-
+    for lang in planguage:
+        #print globals()
+        print lang
+        klass = inspect.getmembers(globals()[lang], inspect.isclass)[1][1]
+        #print klass[1][1]
         toGenerate = globals()[lang.upper()]
         prompt = globals()[lang.upper() + "_PROMPT"]
         if (toGenerate == 1 or prompt == 1):
+            #print type(klass[1][1])
             klass().generate(n.parsed, prompt, verbose)
 
 main()

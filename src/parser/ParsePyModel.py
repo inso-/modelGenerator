@@ -1,5 +1,13 @@
-from DjangoModel import *
+#from src.utils.DjangoModel import *
+import sys
+sys.path.append('../.')
+from utils.DjangoModel import *
 
+# Add the ptdraft folder path to the sys.path list
+
+#from src.utils import *
+
+#from ...utils import *
 
 class ParsePyModel:
     pyFile = None

@@ -1,5 +1,8 @@
-from DjangoModel import *
 import json
+import sys
+#from src.utils.DjangoModel import *
+sys.path.append('../.')
+from utils.DjangoModel import *
 
 class ParseJson:
     jsonFile = None

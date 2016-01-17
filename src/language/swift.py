@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from pydjgenerator import *
+from src.pydjgenerator import *
 
 
 class swift(CodeGenerator):

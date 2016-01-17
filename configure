@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from src.language import *
-
+from src.language.language import *
+from src.utils.PromptUtils import *
 
 def configure_generate_settings():
             code = ""

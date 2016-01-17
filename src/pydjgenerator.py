@@ -1,5 +1,7 @@
-from PromptUtils import *
 import time
+import sys
+sys.path.append('.')
+from src.utils.PromptUtils import *
 
 
 class CodeGenerator():
@@ -17,6 +19,7 @@ class CodeGenerator():
     construct = False
     serialize = False
     header_file = False
+    inverseNameType = False
     code = ""
     codeHeader = ""
     codeConstruct = ""
@@ -86,7 +89,10 @@ class CodeGenerator():
         self.codeCor = self.classTemplate % model.nameClass
         for varName, varType in model.var.iteritems():
                 typeVar = self.getType(varType)
-                self.codeCor += self.classVariableTemplate % (typeVar, varName)
+                if self.inverseNameType == 1:
+                    self.codeCor += self.classVariableTemplate % (varName, typeVar)
+                else:
+                    self.codeCor += self.classVariableTemplate % (typeVar, varName)
                 if self.getter_setter:
                     self.generateGetterSetter(typeVar, varName)
                 if self.construct:

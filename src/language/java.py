@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from pydjgenerator import CodeGenerator
+from src.pydjgenerator import CodeGenerator
 
 
 class java(CodeGenerator):
@@ -33,18 +33,48 @@ class java(CodeGenerator):
         self.jsonConstructClose = "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
         self.getterTemplate = "\tpublic %s get%s() {\n\t\treturn %s;\n\t}\n\n"
         self.setterTemplate = "\tpublic void set%s(%s Param%s) {\n\t\t%s = Param%s;\n\t}\n\n"
+#        self.typeTable = {
+#            "CharField": "String",
+#            "TextField": "String",
+#            "IntegerField": "int",
+#            "DecimalField": "int",
+#            "PositiveSmallIntegerField": "int",
+#            "BigIntegerField": "long",
+#            "BooleanField": "boolean",
+#            "DateField": "String",
+#            "DateTimeField": "String",
+#            "ListField": "List<Object>",
+#        }
         self.typeTable = {
+            "EmailField": "String",
+            "FileField": "String",
+            "FilePathField": "String",
             "CharField": "String",
-            "TextField": "String",
+            "FieldFile": "String",
+            "URLField": "String",
+            "GenericIPAddressField": "String",
+            "SlugField": "String",
+            "ImageField": "String",
             "IntegerField": "int",
-            "DecimalField": "int",
-            "PositiveSmallIntegerField": "int",
+            "AutoField": "int",
+            "PositiveIntegerField": "unsigned int",
+            "PositiveSmallIntegerField": "unsigned short",
+            "SmallIntegerField": "short",
+            "DurationField": "intT",
             "BigIntegerField": "long",
+            "BinaryField": "byte[]",
             "BooleanField": "boolean",
-            "DateField": "String",
-            "DateTimeField": "String",
-            "ListField": "List<Object>",
+            "NullBooleanField": "boolean",
+            "DateField": "java.sql.Date",
+            "DateTimeField": "java.sql.Timestamp",
+            "DecimalField": "java.math.BigDecimal",
+            "FloatField": "Double",
+            "TextField": "String",
+            "TimeField": "java.sql.Time",
+            "UUIDField": "java.sql.Rowid",
+#            "CommaSeparatedIntegerField": "DataTypes.",
         }
+
         self.jsontypeTable =  {
             "CharField": "optString",
             "TextField": "optString",
