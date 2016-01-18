@@ -19,6 +19,8 @@ Destination (Language of Generated Object) avalaible:
 With Json Constructor/Serializer Getter an Setter for each model's object attributes
 - C++ (.cpp/.hh)
 - C# (.cs)
+- NodeJS sequelize (.js)
+- Python Django (.py)
 
 Dependencies:  
 - python
