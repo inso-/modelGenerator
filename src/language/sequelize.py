@@ -11,7 +11,9 @@ class Sequelize(CodeGenerator):
         self.classTemplate = "module.exports = function(sequelize, DataTypes) {\nreturn sequelize.define('%s', {\n"
         self.classCloser = "};"
         self.commentSyntax = "//"
+        self.foreignSpecific = True
         self.classVariableTemplate = "\t%s: {\n\t\ttype: %s\n\t};\t\n"
+        self.classVariableForeignTemplate = "\t%s{\n\t\ttype: Sequelize.INTEGER,\n\t\treferences: '%s',\n\t\treferencesKey: '%s'\n\t}\n"
         self.includeTemplate = ""
         self.inverseNameType = True
         self.typeTable = {

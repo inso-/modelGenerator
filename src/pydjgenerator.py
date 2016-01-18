@@ -20,6 +20,7 @@ class CodeGenerator():
     serialize = False
     header_file = False
     inverseNameType = False
+    foreignSpecific = False
     code = ""
     codeHeader = ""
     codeConstruct = ""
@@ -33,6 +34,7 @@ class CodeGenerator():
     classCloser = ""
     commentSyntax = ""
     classVariableTemplate = ""
+    classVariableForeignTemplate = ""
     includeTemplate = ""
     implemTemplate = ""
     defaultConstructTemplate = ""
@@ -49,6 +51,7 @@ class CodeGenerator():
     setterTemplate = ""
     jsonConstructClose = ""
     serializeClose = ""
+
 
     def __init__(self):
         pass
@@ -89,10 +92,16 @@ class CodeGenerator():
         self.codeCor = self.classTemplate % model.nameClass
         for varName, varType in model.var.iteritems():
                 typeVar = self.getType(varType)
-                if self.inverseNameType == 1:
-                    self.codeCor += self.classVariableTemplate % (varName, typeVar)
+                if "ForeignKey" in varType and self.foreignSpecific:
+                    if self.inverseNameType:
+                        self.codeCor += self.classVariableForeignTemplate % (varName, typeVar, varName)
+                    else:
+                        self.codeCor += self.classVariableForeignTemplate % (typeVar, varName, varName)
                 else:
-                    self.codeCor += self.classVariableTemplate % (typeVar, varName)
+                    if self.inverseNameType == 1:
+                        self.codeCor += self.classVariableTemplate % (varName, typeVar)
+                    else:
+                        self.codeCor += self.classVariableTemplate % (typeVar, varName)
                 if self.getter_setter:
                     self.generateGetterSetter(typeVar, varName)
                 if self.construct:
@@ -126,7 +135,6 @@ class CodeGenerator():
                 self.codeSerialize += self.foreignKeySerializeTemplate % varName
         else:
                 self.codeSerialize += self.serializeCorTemplate % (varName, varName)
-
 
     def generate(self, parsed, prompt=False, verbose=False):
         for model in parsed:
