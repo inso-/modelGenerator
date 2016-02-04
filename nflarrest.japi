@@ -1,0 +1,177 @@
+{
+  "EXAMPLE_PARAM" : {
+    "CrimeID": "DUI",
+    "TeamID": "MIN",
+    "PlayerName": "Charles Woodson",
+    "PositionID" : "CB"
+  },
+
+  "GET": [
+    {
+      "URL": "NflArrest.com/api/v1/crime",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string",
+        "start_pos": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/crime/topTeams/{CrimeID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/crime/topPositions/{CrimeID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/crime/timeline/{CrimeID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/crime/arrests/{CrimeID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/team",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string",
+        "start_pos": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/team/topPlayers/{TeamID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/team/topCrimes/{TeamID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/team/search/",
+      "PARAM": {
+        "start_pos": "string",
+        "term": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/team/timeline/{TeamID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/team/arrests/{TeamID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/player",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string",
+        "start_pos": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/player/topCrimes/{PlayerName}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/player/search/",
+      "PARAM": {
+        "start_pos": "string",
+        "term": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/player/arrests/{PlayerName}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/position",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string",
+        "start_pos": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/position/topTeams/{PositionID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/position/topCrimes/{PositionID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/position/timeline/{PositionID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    },
+    {
+      "URL": "NflArrest.com/api/v1/position/arrests/{PositionID}",
+      "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string"
+      }
+    }
+  ],
+    "POST": [
+  ]
+}
