@@ -1,6 +1,4 @@
 #!/bin/sh
 
 source env/bin/activate
-./ModelGenerator/manage.py inspectdb >> out.py
-python src/main.py out.py -v
-mv out.py output/modelsDjango.py
+python src/main.py /Users/inso/work/TMmodelGenerator/data2.json -v

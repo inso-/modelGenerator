@@ -21,30 +21,19 @@ class java(CodeGenerator):
         self.implemTemplate = "@implementation %s"
         self.codeGenericInclude = "import org.json.JSONException;\nimport org.json.JSONObject;\n"
         self.defaultConstructTemplate = "\tpublic %s() {}\n\n"
-        self.jsonConstructTemplate = "\tpublic %s(JSONObject data) {\n"
         self.serializeTemplate =  "\tpublic JSONObject toJSON() {\n\t\tJSONObject data = new JSONObject();\n\t\ttry {\n"
         self.serializeCorTemplate = "\t\t\tdata.put(\"%s\", %s);\n "
         self.serializeClose = "\t\t}\n"
         self.foreignKeySerializeTemplate = "\t\t\t\tdata.put(\"%s\", %s.toJSON());\n "
         self.serializeConditionTemplate = "\t\t\tif (%s != null)\n"
+        self.jsonConstructTemplate = "\tpublic %s(JSONObject data) {\n"
         self.jsonConstructCorTemplate = "\t\t%s = %s(\"%s\")"
+        self.jsonConstructCor = True
         self.jsonConstructCorClose = ";\n"
         self.jsonConstructCorCloseForeign = ");\n"
         self.jsonConstructClose = "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
         self.getterTemplate = "\tpublic %s get%s() {\n\t\treturn %s;\n\t}\n\n"
         self.setterTemplate = "\tpublic void set%s(%s Param%s) {\n\t\t%s = Param%s;\n\t}\n\n"
-#        self.typeTable = {
-#            "CharField": "String",
-#            "TextField": "String",
-#            "IntegerField": "int",
-#            "DecimalField": "int",
-#            "PositiveSmallIntegerField": "int",
-#            "BigIntegerField": "long",
-#            "BooleanField": "boolean",
-#            "DateField": "String",
-#            "DateTimeField": "String",
-#            "ListField": "List<Object>",
-#        }
         self.typeTable = {
             "EmailField": "String",
             "FileField": "String",
@@ -60,7 +49,7 @@ class java(CodeGenerator):
             "PositiveIntegerField": "unsigned int",
             "PositiveSmallIntegerField": "unsigned short",
             "SmallIntegerField": "short",
-            "DurationField": "intT",
+            "DurationField": "int",
             "BigIntegerField": "long",
             "BinaryField": "byte[]",
             "BooleanField": "boolean",

@@ -3,7 +3,6 @@ import sys
 sys.path.append('.')
 from src.utils.PromptUtils import *
 
-
 class CodeGenerator():
     file_implem_out = None
     file_out = None
@@ -21,6 +20,8 @@ class CodeGenerator():
     header_file = False
     inverseNameType = False
     foreignSpecific = False
+    include_lib = False
+    jsonConstructCor = False
     code = ""
     codeHeader = ""
     codeConstruct = ""
@@ -30,6 +31,10 @@ class CodeGenerator():
     codeCor = ""
     codeGetterSetter = ""
     outputDirectory = "output/"
+    APIclassTemplate = ""
+    APIsingleton = False
+    APIvariable = ""
+    singletonTemplate = ""
     classTemplate = ""
     classCloser = ""
     commentSyntax = ""
@@ -51,7 +56,13 @@ class CodeGenerator():
     setterTemplate = ""
     jsonConstructClose = ""
     serializeClose = ""
-
+    APImethodTemplateOpen = ""
+    APImethodTemplateClose = ""
+    APImethodParamTemplate = ""
+    APImethodImplemTemplateOpen = ""
+    APImethodImplemTemplateClose = ""
+    APImethodImplemParamTemplate = ""
+    paramSeparator = ""
 
     def __init__(self):
         pass
@@ -104,7 +115,7 @@ class CodeGenerator():
                         self.codeCor += self.classVariableTemplate % (typeVar, varName)
                 if self.getter_setter:
                     self.generateGetterSetter(typeVar, varName)
-                if self.construct:
+                if self.construct and self.jsonConstructCor is not False:
                     self.generateConstruct(varType, varName)
                 if self.serialize:
                     self.generateSerialize(varType, varName)
@@ -150,8 +161,11 @@ class CodeGenerator():
 
     def initConstruct(self, model):
         self.codeConstruct = ""
-        self.codeConstruct += self.defaultConstructTemplate % model.nameClass
-        self.codeConstruct += self.jsonConstructTemplate % model.nameClass
+        #self.codeConstruct += self.defaultConstructTemplate % model.nameClass
+        if (self.jsonConstructCor != False):
+            self.codeConstruct += self.jsonConstructTemplate % model.nameClass
+        else:
+            self.codeConstruct += self.jsonConstructTemplate
 
     def initSerialize(self, model):
         self.codeSerialize = ""
@@ -174,7 +188,7 @@ class CodeGenerator():
     def generateFile(self, model):
         self.file_out = open(self.outputDirectory + model.nameClass + self.extensien_file_out, "w")
         self.code = ""
-        self.codeInclude = ""
+        self.codeInclude = self.codeGenericInclude
         self.codeCor += self.classTemplate % model.nameClass
         self.generateHeader(model.nameClass + self.extensien_file_out)
         if self.construct:
@@ -194,3 +208,145 @@ class CodeGenerator():
             self.code += self.codeGetterSetter + "\n"
         self.code += self.classCloser
         self.file_out.write(self.code)
+
+    def generateAPICor(self, api):
+        title = api.title.replace(" ", "") + "Client"
+        if self.APIsingleton:
+            self.codeCor += self.singletonTemplate % (title, title)
+        self.codeCor += self.APIVariable
+        #url = api.baseUrl
+        for route in api.resources.__iter__():
+            print route
+            print api.resources[route]
+            if "{" in route:
+                a = route.split("{")[1].replace("}", "")
+                if "," in a:
+                    param = a.split(",")
+                    paramUrl = len(param)
+                else:
+                    paramUrl = 1;
+                    param = []
+                    param.append(a)
+
+            for method in api.resources[route].methods:
+                print method
+                print api.resources[route].methods[method]
+                self.codeCor += self.APImethodTemplateOpen % ((method + route).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+                i = 0
+                while (i < paramUrl):
+                        if (i > 1):
+                            self.codeCor += self.paramSeparator
+                        self.codeCor += self.APImethodParamTemplate % param[i]
+                        i = i + 1
+                self.codeCor += self.APImethodTemplateClose
+        pass
+
+    def generateAPIImplemCOR(self, api):
+        title = api.title.replace(" ", "") + "Client"
+        if self.APIsingleton:
+            self.codeCor += self.singletonImplemTemplate % (title, title, title)
+            if '{' in api.baseUri:
+                b = api.baseUri.split("{")[1].replace("}", "")
+                url = api.baseUri.split("{")[0] + str(getattr(api, b))
+            self.codeCor += self.baseURLImplemTemplate % url
+        for route in api.resources.__iter__():
+            print route
+            print api.resources[route]
+            codeRouteparam = ""
+            codeRoute = ""
+            if "{" in route:
+                a = route.split("{")[1].replace("}", "")
+                b = route.split("{")[0]
+                if "," in a:
+                    codeRouteFormat = '[NSString stringwithformat: @"' + b + '",' + '@"'
+                    param = a.split(",")
+                    paramUrl = len(param)
+
+                    for p in param:
+                        codeRouteFormat += "%@/"
+                        codeRouteparam += ""
+                        codeParam = p + ","
+                    codeRouteFormat += '"]'
+                    codeRoute += '[NSString stringwithformat:@"' + codeRouteFormat + '",' + codeParam[:-1] + "]"
+
+                else:
+                    paramUrl = 1;
+                    param = []
+                    param.append(a)
+                    codeRoute = '[NSString stringwithformat:@"' + b + '%s",' + param[0] + '"]'
+
+
+            for method in api.resources[route].methods:
+                print method
+                print api.resources[route].methods[method]
+                self.codeCor += self.APImethodDefineImplemTemplateOpen % ((method + route).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+                i = 0
+                while (i < paramUrl):
+                        if (i > 1):
+                            self.codeCor += self.paramSeparator
+                        self.codeCor += self.APImethodParamTemplate % param[i]
+                        i = i + 1
+                self.codeCor += self.APImethodDefineImplemTemplateClose
+                self.codeCor += self.APImethodImplemTemplateOpen
+                self.codeCor += self.APImethodImplemTemplate % (method.upper(), codeRoute)
+                self.codeCor += self.APImethodImplemTemplateClose
+        pass
+
+        #self.codeCor +=  self.implemTemplate % title
+        #self.codeCor += "\n" + self.classCloser
+        pass
+
+
+
+    def generateAPIFile(self, api):
+        title = api.title.replace(" ", "") + "Client"
+        self.file_out = open(self.outputDirectory + title + self.extensien_file_out, "w")
+        self.code = ""
+        self.codeInclude = ""
+        self.codeCor += self.APIclassTemplate % title
+        self.generateHeader(title + self.extensien_file_out)
+        self.generateAPICor(api)
+        self.code += self.codeHeader + "\n"
+        if self.include_lib:
+            self.code += self.codeInclude + "\n"
+        self.code += self.codeCor + "\n"
+        self.code += self.classCloser
+        self.file_out.write(self.code)
+        pass
+
+    def generateAPIImplemFile(self, api):
+        title = api.title.replace(" ", "") + "Client"
+        self.file_implem_out = open(self.outputDirectory + title + self.extensien_implem_out, "w")
+        self.generateHeader(title+ self.extensien_implem_out)
+        self.code = ""
+        self.codeCor = ""
+        self.codeInclude = ""
+        self.codeInclude += self.includeTemplate % title
+        self.generateAPIImplemCOR(api)
+        self.code += self.codeHeader + "\n"
+        self.code += self.codeInclude + "\n"
+        self.code += self.codeCor
+        self.file_implem_out.write(self.code)
+        pass
+
+    def generateAPI(self, parsed, prompt=False, verbose=False):
+        title = parsed.title.replace(" ", "") + "Client"
+        if prompt and not query_yes_no("generate " + title + " ?"):
+            return
+        self.generateAPIFile(parsed)
+        if verbose:
+            print "Generate " + self.outputDirectory +title + self.extensien_file_out
+        if self.implem_out:
+            self.generateAPIImplemFile(parsed)
+            if verbose:
+                print "Generate output/" + title + ".m"
+
+#        print n.parsed.title
+#        print n.parsed.documentation
+#        print n.parsed.baseUri
+#        print n.parsed.resources
+#        print type(n.parsed.resources)
+
+
+
+    pass

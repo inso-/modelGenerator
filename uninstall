@@ -6,3 +6,18 @@ rm -rf output
 rm src/settings.py
 rm src/*~
 rm src/*.pyc
+
+
+ success:^(NSURLSessionDataTask *task, id responseObject) {
+\n\t\t\tNSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+\n\t\t\tif (httpResponse.statusCode == 200) {
+\n\t\t\t} else {
+\n\t\t\t    dispatch_async(dispatch_get_main_queue(), ^{
+\n\t\t\t\t   completion(nil, nil);
+\n\t\t\t    }
+\n\t\t\t}
+\n\t\t\t    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+\n\t\t\tdispatch_async(dispatch_get_main_queue(), ^{
+\n\t\t\t    completion(nil, error);
+\n\t\t\t});
+\n\t\t\t    }];

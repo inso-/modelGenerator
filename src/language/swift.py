@@ -9,11 +9,20 @@ class swift(CodeGenerator):
         self.extensien_file_out = ".swift"
         self.defaultType = "Int"
         self.include_foreign = True
-        self.classTemplate = "Class %s {\n\n"
+        self.construct = True
+        self.codeGenericInclude = "import UIKit\n\n"
+        self.classTemplate = "class %s: NSObject {\n\n"
         self.classCloser = "}"
         self.commentSyntax = "//"
-        self.classVariableTemplate = "\tlet %s: %s\n"
+        self.classVariableTemplate = "\tvar %s: %s!\n"
+        self.inverseNameType = True
         self.includeTemplate = "import %s\n"
+        self.jsonConstructTemplate = "\tinit(data: NSDictionary)\n\t{\n\t\tsuper.init()\n\t\tself.setValuesForKeysWithDictionary(data as! [String : AnyObject])\n"
+        self.jsonConstructCor = False
+        self.jsonConstructCorTemplate = ""
+        self.jsonConstructCorClose = ""
+        self.jsonConstructCorCloseForeign = ""
+        self.jsonConstructClose = "\t}\n"
         self.typeTable = {
             "CharField": "String",
             "TextField": "String",

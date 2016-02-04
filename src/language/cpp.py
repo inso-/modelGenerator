@@ -19,18 +19,6 @@ class cpp(CodeGenerator):
         self.classVariableTemplate = "public : %s %s;\n"
         self.includeTemplate = "#include \"%s" + self.extensien_file_out + "\"\n"
         self.implemTemplate = "class %s{\n"
-#        self.typeTable = {
-#            "CharField": "String",
-#            "TextField": "String",
-#            "IntegerField": "int",
-#            "DecimalField": "int",
-#            "PositiveSmallIntegerField": "int",
-#            "BigIntegerField": "double",
-#            "BooleanField": "bool",
-#            "DateField": "date",
-#            "DateTimeField": "date",
-#            "ListField": "list<model>",
-#        }
         self.typeTable = {
             "EmailField": "CString",
             "FileField": "CString",
@@ -60,32 +48,3 @@ class cpp(CodeGenerator):
             "UUIDField": "CString",
             "CommaSeparatedIntegerField": "",
             }
-##        self.typeTable = {
-##            "AutoField": "" ,
-##            "BigIntegerField": "" ,
-##            "BinaryField": "" ,
-##            "BooleanField": "" ,
-##            "CharField": "" ,
-##            "CommaSeparatedIntegerField": "" ,
-##            "DateField": "" ,
-##            "DateTimeField": "" ,
-##            "DecimalField": "" ,
-##            "DurationField": "" ,
-##            "EmailField": "" ,
-##            "FileField": "" ,
-##            "FileField and FieldFile": "" ,
-##            "FilePathField": "" ,
-##            "FloatField": "" ,
-##            "ImageField": "" ,
-##            "IntegerField": "" ,
-##            "GenericIPAddressField": "" ,
-##            "NullBooleanField": "" ,
-##            "PositiveIntegerField": "" ,
-##            "PositiveSmallIntegerField": "" ,
-##            "SlugField": "" ,
-##            "SmallIntegerField": "" ,
-##            "TextField": "" ,
-##            "TimeField": "" ,
-##            "URLField": "" ,
-##            "UUIDField": "" ,
-##            }

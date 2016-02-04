@@ -1,5 +1,7 @@
 import json
 import sys
+import random
+import string
 #from src.utils.DjangoModel import *
 sys.path.append('../.')
 from utils.DjangoModel import *
@@ -22,10 +24,16 @@ class ParseJson:
         self.varName = None
 
     def parse_rec(self, it, model):
+
+        if (type(it) is list):
+            if len(it) < 1:
+                return
+            self.parse_rec(it[0], model)
+
         if type(it) is dict:
             if model is None:
                 model = DjangoModel()
-                model.setClassName("BaseClass")
+                model.setClassName("BaseClass" + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(1)))
 
             for key, value in it.items():
                 if type(value) is list:
@@ -43,13 +51,33 @@ class ParseJson:
                 else:
                     model.addFunc(key, str(type(value)))
 
-        if model.nameClass not in self.genered:
+      #  if type(it) is list:
+      #      if model is None:
+      #          model = DjangoModel()
+      #          model.setClassName("BaseClass")
+      #      i = 0
+      #      for i in it:
+      #          i = i + 1
+      #          if type(value) is dict or type(value) is list:
+      #              newModel = DjangoModel()
+      #              newModel.setClassName(model.nameClass + str(i))
+      #              self.parse_rec(i, newModel)
+      #          if model.nameClass not in self.genered:
+      #              self.parsed.append(model)
+      #              self.genered.append(model.nameClass)
+
+        if model != None and model.nameClass not in self.genered:
             self.parsed.append(model)
             self.genered.append(model.nameClass)
             return
 
-    def parse(self):
-        self.parse_rec(json.load(self.pyFile), None)
+    def parse(self, data="", name="BaseClass"):
+        model = DjangoModel()
+        model.setClassName(name)
+        if data == "":
+            self.parse_rec(json.load(self.jsonFile), model)
+        else:
+            self.parse_rec(data, model)
         self.convert()
 
     def convert(self):
