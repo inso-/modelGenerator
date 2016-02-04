@@ -29,12 +29,12 @@ def main():
         n.parse()
         run_generate_model(n, verbose)
 
-    elif ".json" in fileName and not ".desc.json" in fileName:
+    elif ".json" in fileName:
         n = ParseJson(fileName)
         n.parse()
         run_generate_model(n, verbose)
 
-    elif ".desc.json" in fileName:
+    elif ".japi" in fileName:
         n = ParseDescJson(fileName)
         n.parse()
         for elem in n.parsed['GET']:
@@ -52,12 +52,8 @@ def main():
                 response = urllib.urlopen(url)
                 strJson = response.read()
                 data = json.loads(strJson)
-                #print data
-               # print strJson
                 tmp = ParseJson()
                 tmp.parse(data, modelName)
-                #print "PARSED:"
-                #print type(tmp.parsed)
                 run_generate_model(tmp, verbose)
             except Exception as e:
                 print url
