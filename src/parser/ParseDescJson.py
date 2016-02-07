@@ -11,7 +11,7 @@ class ParseDescJson:
     parsedAPI = []
     parsedModel = []
 
-    def __init__(self, fileName="nflarrest.japi"):
+    def __init__(self, fileName="/example_source/nflarrest.japi"):
         self.descJsonFile = fileName
 
     def parse_model(self, exampleParam):

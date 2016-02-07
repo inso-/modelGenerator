@@ -47,13 +47,13 @@ def configure_database_settings():
                     import os
                     path = ""
                     if res == "sqlite3":
-                        path = query("Sqlite3 file path", False, os.getcwd() + "/db.sqlite3")
+                        path = query("Sqlite3 file path", False, os.getcwd() + "/example_source/db.sqlite3")
                     elif res == "json":
-                        path = query("JSON file path", False, os.getcwd() + "/data.json")
+                        path = query("JSON file path", False, os.getcwd() + "/example_source/data.json")
                     elif res == "raml":
-                        path = query("RAML file path", False, os.getcwd() + "/schema.raml")
+                        path = query("RAML file path", False, os.getcwd() + "/example_source/schema.raml")
                     elif res == "japi":
-                        path = query("JAPI file path", False, os.getcwd() + "/nflarrest.japi")
+                        path = query("JAPI file path", False, os.getcwd() + "/example_source/nflarrest.japi")
             else:
                     ip = query("Database IP", False, "127.0.0.1")
                     port = query("Database Port", False, "1234")

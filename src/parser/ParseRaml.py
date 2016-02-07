@@ -9,7 +9,7 @@ class ParseRaml:
     parsedAPI = None
     parsedModel = None
 
-    def __init__(self, fileName="schema.raml"):
+    def __init__(self, fileName="/example_source/schema.raml"):
         self.ramlFile = fileName
 
     def parse_baseurl(self, api):

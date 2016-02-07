@@ -14,7 +14,7 @@ class ParseJson:
     parsedModel = []
     tmpModel = DjangoModel()
 
-    def __init__(self, fileName="data.json"):
+    def __init__(self, fileName="/example_source/data.json"):
         self.pyFile = open(fileName, 'r')
         self.genered = []
         self.parsedModel = []
