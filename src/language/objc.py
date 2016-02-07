@@ -6,6 +6,7 @@ class objc(CodeGenerator):
 
     def __init__(self):
         CodeGenerator.__init__(self)
+        self.singletonTemplateArg = 2
         self.singletonTemplate = "+ (%s)The%s;\n\n"
         self.singletonImplemTemplate = "+ (%s)The%s {\n\tstatic %s *_theApiClient = nil;\n\tstatic dispatch_once_t onceToken;\n\tdispatch_once(&onceToken, ^{\n\t\t"
         self.codeGenericInclude = "#import <Foundation/Foundation.h>\n\n"
@@ -18,6 +19,9 @@ class objc(CodeGenerator):
         self.classTemplate = "@interface %s : NSObject\n\n"
         self.classCloser = "@end"
         self.commentSyntax = "//"
+        self.paramCloser = "]"
+        self.formatFlag = "%@/"
+        self.callParamSeparator = ","
         self.classVariableTemplate = "@property(nonatomic, strong) %s *%s;\n"
         self.includeTemplate = "@import \"%s" + self.extensien_file_out + "\"\n"
         self.implemTemplate = "@implementation %s"

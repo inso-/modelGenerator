@@ -2,9 +2,12 @@ import time
 import sys
 sys.path.append('.')
 from src.utils.PromptUtils import *
+import itertools
+import os
 
 class CodeGenerator():
     API = False
+    APIImplemin_out = False
     file_implem_out = None
     file_out = None
     extensien_file_out = None
@@ -149,16 +152,19 @@ class CodeGenerator():
                 self.codeSerialize += self.serializeCorTemplate % (varName, varName)
 
     def generate(self, parsed, prompt=False, verbose=False):
+        lang = self.__class__.__name__
+        path = self.outputDirectory + lang + "/model/"
+        mkdir_p(path)
         for model in parsed:
             if prompt and not query_yes_no("generate " + model.nameClass + " ?"):
                 continue
             self.generateFile(model)
             if verbose:
-                print "Generate " + self.outputDirectory + model.nameClass + self.extensien_file_out
+                print "Generate " + path + model.nameClass + self.extensien_file_out
             if self.implem_out:
                 self.generateImplemFile(model)
                 if verbose:
-                    print "Generate output/" + model.nameClass + ".m"
+                    print "Generate " + path + model.nameClass + self.extensien_implem_out
 
     def initConstruct(self, model):
         self.codeConstruct = ""
@@ -172,8 +178,12 @@ class CodeGenerator():
         self.codeSerialize = ""
         self.codeSerialize += self.serializeTemplate
 
+
+
     def generateImplemFile(self, model):
-        self.file_implem_out = open(self.outputDirectory + model.nameClass + self.extensien_implem_out, "w")
+        lang = self.__class__.__name__
+        path = self.outputDirectory + lang + "/model/"
+        self.file_implem_out = open(path + model.nameClass + self.extensien_implem_out, "w")
         self.generateHeader(model.nameClass + self.extensien_implem_out)
         self.code = ""
         self.codeCor = ""
@@ -187,7 +197,9 @@ class CodeGenerator():
         self.file_implem_out.write(self.code)
 
     def generateFile(self, model):
-        self.file_out = open(self.outputDirectory + model.nameClass + self.extensien_file_out, "w")
+        lang = self.__class__.__name__
+        path = self.outputDirectory + lang + "/model/"
+        self.file_out = open(path + model.nameClass + self.extensien_file_out, "w")
         self.code = ""
         self.codeInclude = self.codeGenericInclude
         self.codeCor += self.classTemplate % model.nameClass
@@ -213,7 +225,12 @@ class CodeGenerator():
     def generateAPICor(self, api):
         title = api.title.replace(" ", "") + "Client"
         if self.APIsingleton:
-            self.codeCor += self.singletonTemplate % (title, title)
+            if self.singletonTemplateArg == 2:
+                self.codeCor += self.singletonTemplate % (title, title)
+            elif self.singletonTemplateArg == 3:
+                self.codeCor += self.singletonTemplate % (title, title, title)
+            if self.APIImplemin_out:
+                self.codeCor += self.baseURLImplemTemplate % api.baseURL
         self.codeCor += self.APIVariable
         #url = api.baseUrl
         for route in api.route:
@@ -235,7 +252,15 @@ class CodeGenerator():
                             self.codeCor += self.paramSeparator
                         self.codeCor += self.APImethodParamTemplate % param[i]
                         i = i + 1
+
+                if self.APIImplemin_out:
+                    self.codeCor += self.APImethodImplemTemplateOpen
+                    self.codeCor += self.APImethodImplemTemplate % (route.method.upper(), route.url.replace("{", "\" + ").replace("}", ""))
+                    self.codeCor += self.APImethodImplemTemplateClose
+
+
                 self.codeCor += self.APImethodTemplateClose
+
         pass
 
 
@@ -254,21 +279,20 @@ class CodeGenerator():
                 url = route.url.split("{")[1].replace("}", "")
                 b = route.url.split("{")[0]
                 if "," in a:
-                    codeRouteFormat = '[NSString stringwithformat: @"' + b + '",' + '@"'
+                    codeRouteFormat = self.APIParamURLTemplate % b
                     param = a.split(",")
 
                     for p in param:
-                        codeRouteFormat += "%@/"
-                        codeRouteparam += ""
-                        codeParam = p + ","
-                    codeRouteFormat += '"]'
-                    codeRoute += '[NSString stringwithformat:@"' + codeRouteFormat + '",' + codeParam[:-1] + "]"
+                        codeRouteFormat += self.formatFlag
+                        codeParam = p + self.callParamSeparator
+                    codeRouteFormat += self.paramCloser
+                    codeRoute += self.APIManyParamURLTemplate % (codeRouteFormat ,codeParam[:-1])
 
                 else:
                     paramUrl = 1;
                     param = []
                     param.append(url)
-                    codeRoute = '[NSString stringwithformat:@"' + b + '%s",' + param[0] + '"]'
+                    codeRoute =  self.APIOneParamURLTemplate % (b , param[0])
 
             self.codeCor += self.APImethodDefineImplemTemplateOpen % ((route.method + route.url).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
             i = 0
@@ -373,8 +397,11 @@ class CodeGenerator():
 
 
     def generateAPIFile(self, api):
+        lang = self.__class__.__name__
+        path = self.outputDirectory + lang + "/API/"
+        mkdir_p(path)
         title = api.title.replace(" ", "") + "Client"
-        self.file_out = open(self.outputDirectory + title + self.extensien_file_out, "w")
+        self.file_out = open(path + title + self.extensien_file_out, "w")
         self.code = ""
         self.codeInclude = ""
         self.codeCor += self.APIclassTemplate % title
@@ -389,8 +416,11 @@ class CodeGenerator():
         pass
 
     def generateAPIImplemFile(self, api):
+        lang = self.__class__.__name__
+        path = self.outputDirectory + lang + "/API/"
+        mkdir_p(path)
         title = api.title.replace(" ", "") + "Client"
-        self.file_implem_out = open(self.outputDirectory + title + self.extensien_implem_out, "w")
+        self.file_implem_out = open(path + title + self.extensien_implem_out, "w")
         self.generateHeader(title + self.extensien_implem_out)
         self.code = ""
         self.codeCor = ""
@@ -405,15 +435,18 @@ class CodeGenerator():
 
     def generateAPI(self, parsed, prompt=False, verbose=False):
         title = parsed.title.replace(" ", "") + "Client"
+        lang = self.__class__.__name__
+        path = self.outputDirectory + lang + "/API/"
+        mkdir_p(path)
         if prompt and not query_yes_no("generate " + title + " ?"):
             return
         self.generateAPIFile(parsed)
         if verbose:
-            print "Generate " + self.outputDirectory + title + self.extensien_file_out
+            print "Generate " + path + title + self.extensien_file_out
         if self.implem_out:
             self.generateAPIImplemFile(parsed)
             if verbose:
-                print "Generate output/" + title + ".m"
+                print "Generate " + path + title + self.extensien_implem_out
 
 #        print n.parsed.title
 #        print n.parsed.documentation
@@ -424,3 +457,18 @@ class CodeGenerator():
 
 
     pass
+
+import errno
+import os
+
+
+def mkdir_p(path):
+    if os.path.exists(path):
+        return
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise

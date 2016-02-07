@@ -19,3 +19,6 @@ class objcAFNetworkingAPI(objc):
         self.APImethodTemplateOpen = "- (NSURLSessionDataTask *)%s:"
         self.APImethodDefineImplemTemplateOpen = self.APImethodTemplateOpen
         self.APImethodParamTemplate = "(NSString *)%s"
+        self.APIOneParamURLTemplate = '[NSString stringwithformat:@\"%s%%@",%s]'
+        self.APIManyParamURLTemplate = '[NSString stringwithformat:\"@%s\",%s]"'
+        self.APIParamURLTemplate = '[NSString stringwithformat: @"%s",@"'

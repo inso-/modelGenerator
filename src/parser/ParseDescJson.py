@@ -37,7 +37,6 @@ class ParseDescJson:
             except Exception as e:
                 print url
                 print e
-        print self.parsedModel
 
     def parse_route(self, api):
         for elem in api['ROUTE']:

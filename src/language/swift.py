@@ -6,6 +6,7 @@ class swift(CodeGenerator):
 
     def __init__(self):
         CodeGenerator.__init__(self)
+        self.API = False
         self.extensien_file_out = ".swift"
         self.defaultType = "Int"
         self.construct = True
@@ -22,6 +23,10 @@ class swift(CodeGenerator):
         self.jsonConstructCorClose = ""
         self.jsonConstructCorCloseForeign = ""
         self.jsonConstructClose = "\t}\n"
+        self.singletonTemplateArg = 3
+        self.singletonTemplate = "\tstruct Static {\n\t\tstatic var onceToken : dispatch_once_t = 0\n\t\tstatic var instance : %s? = nil\n\t}\n\n\tlet functionSessionManager:AFHTTPSessionManager\n\n\tclass var sharedInstance : %s{\n\t\tdispatch_once(&Static.onceToken) {\n\t\t\tStatic.instance = %s()\n\t\t}\n\t\treturn Static.instance!\n\t}\n\n"
+        self.singletonImplemTemplate = ""
+
         self.typeTable = {
             "CharField": "String",
             "TextField": "String",
