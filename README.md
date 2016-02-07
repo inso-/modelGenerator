@@ -10,11 +10,15 @@ Source (Type of Database/file) supported:
 - sqlite3
 - oracle
 - JSON
+- RAML
+- JAPI (JSON API DESC)
 
 Destination (Language of Generated Object) avalaible: 
 
 - Objective-C (.h/.m)
+Optional generation of API framework with AFNetworking from RAML file
 - Swift (.swift)
+With init from Dictionary keyObjectMapping
 - Java (.java)  
 With Json Constructor/Serializer Getter an Setter for each model's object attributes
 - C++ (.cpp/.hh)
