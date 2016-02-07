@@ -25,8 +25,8 @@ Destination (Language of Generated Object) avalaible:
     Subclass:
     - AFNetworking API & Bolts
       Generation of API framework from RAML/JAPI file with AFNetworking  and Bolts
-- Java (.java)
-  -With Json Constructor/Serializer Getter an Setter for each model's object attributes
+- Java (.java)  
+    With Json Constructor/Serializer Getter an Setter for each model's object attributes
 - C++ (.cpp/.hh)
 - C# (.cs)
 - NodeJS sequelize (.js)
