@@ -35,6 +35,7 @@ Destination (Language of Generated Object) avalaible:
 Dependencies:  
 - python
 - virtualenv
+- pip
 
 OS Supported:  
 - unix(osx)/linux
