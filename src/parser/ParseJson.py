@@ -10,13 +10,14 @@ class ParseJson:
     jsonFile = None
     inClass = False
     className = ""
-    parsed = []
+    parsedAPI = None
+    parsedModel = []
     tmpModel = DjangoModel()
 
     def __init__(self, fileName="data.json"):
         self.pyFile = open(fileName, 'r')
         self.genered = []
-        self.parsed = []
+        self.parsedModel = []
         self.inClass = False
         self.ClassName = ""
         self.tmpModel = DjangoModel()
@@ -42,7 +43,7 @@ class ParseJson:
                         newModel.setClassName(key)
                         self.parse_rec(i, newModel)
                         if newModel.nameClass not in self.genered:
-                            self.parsed.append(newModel)
+                            self.parsedModel.append(newModel)
                             self.genered.append(newModel.nameClass)
                 if type(value) is dict:
                     newModel = DjangoModel()
@@ -63,11 +64,11 @@ class ParseJson:
       #              newModel.setClassName(model.nameClass + str(i))
       #              self.parse_rec(i, newModel)
       #          if model.nameClass not in self.genered:
-      #              self.parsed.append(model)
+      #              self.parsedModel.append(model)
       #              self.genered.append(model.nameClass)
 
         if model != None and model.nameClass not in self.genered:
-            self.parsed.append(model)
+            self.parsedModel.append(model)
             self.genered.append(model.nameClass)
             return
 
@@ -95,20 +96,20 @@ class ParseJson:
             #"DateTimeField": "DateTime",
         }
         i = 0
-        for a in self.parsed:
+        for a in self.parsedModel:
             for k, v in a.var.items():
                 v = v.replace("<type '", "").replace("'>", "")
                 a.var[k] = converter.get(v)
                 if a.var[k] == None:
                     print "Type %s not found for %s" % (v, k)
                     a.var[k] = "TextField"
-                self.parsed[i] = a
+                self.parsedModel[i] = a
             i = i + 1
 
 #def test():
 #    a = ParseJson()
 #    a.parse()
-#    for b in a.parsed:
+#    for b in a.parsedModel:
 #            print b.nameClass#print a
 #            print b.var
 

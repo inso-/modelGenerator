@@ -1,4 +1,10 @@
 {
+  "title" : "NFLArrest",
+  "baseURL" : "www.NflArrest.com/api/{version}",
+  "URL_PARAM" : {
+    "version" : "v1"
+    },
+
   "EXAMPLE_PARAM" : {
     "CrimeID": "DUI",
     "TeamID": "MIN",
@@ -6,10 +12,11 @@
     "PositionID" : "CB"
   },
 
-  "GET": [
+  "ROUTE": [
     {
-      "URL": "NflArrest.com/api/v1/crime",
-      "PARAM": {
+      "URL": "/crime",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string",
@@ -17,40 +24,45 @@
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/crime/topTeams/{CrimeID}",
-      "PARAM": {
+      "URL": "/crime/topTeams/{CrimeID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/crime/topPositions/{CrimeID}",
-      "PARAM": {
+      "URL": "/crime/topPositions/{CrimeID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/crime/timeline/{CrimeID}",
-      "PARAM": {
+      "URL": "/crime/timeline/{CrimeID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/crime/arrests/{CrimeID}",
-      "PARAM": {
+      "URL": "/crime/arrests/{CrimeID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/team",
-      "PARAM": {
+      "URL": "/team",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string",
@@ -58,48 +70,54 @@
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/team/topPlayers/{TeamID}",
-      "PARAM": {
+      "URL": "/team/topPlayers/{TeamID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/team/topCrimes/{TeamID}",
-      "PARAM": {
+      "URL": "/team/topCrimes/{TeamID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/team/search/",
-      "PARAM": {
+      "URL": "/team/search/",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_pos": "string",
         "term": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/team/timeline/{TeamID}",
-      "PARAM": {
+      "URL": "/team/timeline/{TeamID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/team/arrests/{TeamID}",
-      "PARAM": {
+      "URL": "/team/arrests/{TeamID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/player",
-      "PARAM": {
+      "URL": "/player",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string",
@@ -107,32 +125,36 @@
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/player/topCrimes/{PlayerName}",
-      "PARAM": {
+      "URL": "/player/topCrimes/{PlayerName}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/player/search/",
-      "PARAM": {
+      "URL": "/player/search/",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_pos": "string",
         "term": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/player/arrests/{PlayerName}",
-      "PARAM": {
+      "URL": "/player/arrests/{PlayerName}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/position",
-      "PARAM": {
+      "URL": "/position",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string",
@@ -140,32 +162,36 @@
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/position/topTeams/{PositionID}",
-      "PARAM": {
+      "URL": "/position/topTeams/{PositionID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/position/topCrimes/{PositionID}",
-      "PARAM": {
+      "URL": "/position/topCrimes/{PositionID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/position/timeline/{PositionID}",
-      "PARAM": {
+      "URL": "/position/timeline/{PositionID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"
       }
     },
     {
-      "URL": "NflArrest.com/api/v1/position/arrests/{PositionID}",
-      "PARAM": {
+      "URL": "/position/arrests/{PositionID}",
+      "METHOD" : "get",
+	  "PARAM": {
         "start_date": "string",
         "end_date": "string",
         "limit": "string"

@@ -1,1 +1,1 @@
-language = ["cpp", "objc", "swift", "java", "csharp", "sequelize"]
+language =  ["cpp", "objc", "objcAFNetworkingAPI", "swift", "java", "csharp", "sequelize"]

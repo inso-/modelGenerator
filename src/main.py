@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, inspect, urllib, json
+import sys, inspect
 from settings import *
 from parser.ParsePyModel import ParsePyModel
 from parser.ParseJson import ParseJson
@@ -24,76 +24,42 @@ def main():
         print("Usage:\n\t\t./" + __file__ + " [PyModel or json InputFile] \n\t\t -v Verbose Mode")
         return
 
+    print "Source : %s" % fileName
+
     if ".py" in fileName:
         n = ParsePyModel(fileName)
-        n.parse()
-        run_generate_model(n, verbose)
-
     elif ".json" in fileName:
         n = ParseJson(fileName)
-        n.parse()
-        run_generate_model(n, verbose)
-
     elif ".japi" in fileName:
         n = ParseDescJson(fileName)
-        n.parse()
-        for elem in n.parsed['GET']:
-            try:
-                url = "http://www." + elem["URL"]
-                atmp = url.split("/")
-                i = len(atmp) - 1
-                if "{" in elem["URL"]:
-                    i = i - 1
-                    a = url.split("{")[1].split("}")[0]
-                    b = n.parsed['EXAMPLE_PARAM'][a]
-                    url = url.split("{")[0] + b
-
-                modelName = atmp[i]
-                response = urllib.urlopen(url)
-                strJson = response.read()
-                data = json.loads(strJson)
-                tmp = ParseJson()
-                tmp.parse(data, modelName)
-                run_generate_model(tmp, verbose)
-            except Exception as e:
-                print url
-                print e
     elif ".raml" in fileName:
         n = ParseRaml(fileName)
-        n.parse()
-        run_generate_api(n, verbose)
-        return
-
     else:
         print("Usage:\n\t\t./" + __file__ + " [PyModel or json InputFile] \n\t\t -v Verbose Mode")
         return
 
+    n.parse()
+    run_generate(n, verbose)
 
-def run_generate_api(data, verbose):
-    print data.parsed.title
-    print data.parsed.documentation
-    print data.parsed.baseUri
-    print data.parsed.resources
-    print type(data.parsed.resources)
-    for a in data.parsed.resources.__iter__():
-        # print a
-        # print n.parsed.resources[a]
-        print data.parsed.resources[a].methods
-    prompt = False
-    objc.objc().generateAPI(data.parsed, prompt, verbose)
-
-
-def run_generate_model(data, verbose):
+def run_generate(data, verbose):
     for lang in planguage:
-        # print globals()
-        #print lang
         klass = inspect.getmembers(globals()[lang], inspect.isclass)[1][1]
-        # print klass[1][1]
         toGenerate = globals()[lang.upper()]
         prompt = globals()[lang.upper() + "_PROMPT"]
         if (toGenerate == 1 or prompt == 1):
-            # print type(klass[1][1])
-            klass().generate(data.parsed, prompt, verbose)
+            gen = klass()
+            run_generate_api(gen, data, verbose, prompt)
+            run_generate_model(gen, data, verbose, prompt)
+
+def run_generate_api(gen, data, verbose, prompt):
+    if gen.API is False or data.parsedAPI is None:
+        return
+    gen.generateAPI(data.parsedAPI, prompt, verbose)
+
+
+def run_generate_model(gen, data, verbose, prompt):
+    if (data.parsedModel != None):
+        gen.generate(data.parsedModel, prompt, verbose)
 
 
 main()

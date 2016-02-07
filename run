@@ -1,4 +1,4 @@
 #!/bin/sh
 
 source env/bin/activate
-python src/main.py /Users/inso/work/TMmodelGenerator/data2.json -v
+python src/main.py /Users/inso/work/TMmodelGenerator/nflarrest.japi -v

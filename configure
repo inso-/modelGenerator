@@ -42,20 +42,25 @@ def find_sub(the_list, substring):
             return -1
 
 def configure_database_settings():
-            res = query_multiple("Database Type", ["sqlite3", "mysql", "oracle", "postgresql", "postgresql_psycopg2", "json"], default=["mysql"])
-            if (res == "sqlite3") or (res == "json"):
+            res = query_multiple("Database Type", ["sqlite3", "mysql", "oracle", "postgresql", "postgresql_psycopg2", "json", "raml", "japi"], default=["mysql"])
+            if (res == "sqlite3") or (res == "json") or (res == "raml") or  (res == "japi"):
                     import os
-                    if res is "sqlite3":
+                    path = ""
+                    if res == "sqlite3":
                         path = query("Sqlite3 file path", False, os.getcwd() + "/db.sqlite3")
-                    else:
+                    elif res == "json":
                         path = query("JSON file path", False, os.getcwd() + "/data.json")
+                    elif res == "raml":
+                        path = query("RAML file path", False, os.getcwd() + "/schema.raml")
+                    elif res == "japi":
+                        path = query("JAPI file path", False, os.getcwd() + "/nflarrest.japi")
             else:
                     ip = query("Database IP", False, "127.0.0.1")
                     port = query("Database Port", False, "1234")
                     user = query("Database User", False, "Admin")
                     name = query("Database Name")
                     password = query("Database Password", True)
-            if res != "json":
+            if res != "json" and res != "raml" and res != "japi":
                 code = "# Database\n # https://docs.djangoproject.com/en/1.9/ref/settings/#databases\n\n"
 
                 code += "DATABASES = {\n\t'default': {\n"
@@ -92,7 +97,7 @@ def configure_database_settings():
             codeDB = "#!/bin/sh\n\nsource env/bin/activate\n./ModelGenerator/manage.py inspectdb >> out.py\npython src/main.py out.py -v\nmv out.py output/modelsDjango.py\n"
             codeJSON = "#!/bin/sh\n\nsource env/bin/activate\npython src/main.py %s -v\n" % path
 
-            if (res == "json"):
+            if (res == "json" or res == "raml" or res == "japi"):
                 settings.write(codeJSON)
             else:
                 settings.write(codeDB)

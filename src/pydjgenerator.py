@@ -4,6 +4,7 @@ sys.path.append('.')
 from src.utils.PromptUtils import *
 
 class CodeGenerator():
+    API = False
     file_implem_out = None
     file_out = None
     extensien_file_out = None
@@ -215,11 +216,10 @@ class CodeGenerator():
             self.codeCor += self.singletonTemplate % (title, title)
         self.codeCor += self.APIVariable
         #url = api.baseUrl
-        for route in api.resources.__iter__():
-            print route
-            print api.resources[route]
-            if "{" in route:
-                a = route.split("{")[1].replace("}", "")
+        for route in api.route:
+            if "{" in route.url:
+                a = route.url.split("{")[1].replace("}", "")
+                paramUrl = 0
                 if "," in a:
                     param = a.split(",")
                     paramUrl = len(param)
@@ -228,10 +228,7 @@ class CodeGenerator():
                     param = []
                     param.append(a)
 
-            for method in api.resources[route].methods:
-                print method
-                print api.resources[route].methods[method]
-                self.codeCor += self.APImethodTemplateOpen % ((method + route).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+                self.codeCor += self.APImethodTemplateOpen % ((route.method + route.url).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
                 i = 0
                 while (i < paramUrl):
                         if (i > 1):
@@ -241,26 +238,24 @@ class CodeGenerator():
                 self.codeCor += self.APImethodTemplateClose
         pass
 
+
+
     def generateAPIImplemCOR(self, api):
         title = api.title.replace(" ", "") + "Client"
         if self.APIsingleton:
             self.codeCor += self.singletonImplemTemplate % (title, title, title)
-            if '{' in api.baseUri:
-                b = api.baseUri.split("{")[1].replace("}", "")
-                url = api.baseUri.split("{")[0] + str(getattr(api, b))
-            self.codeCor += self.baseURLImplemTemplate % url
-        for route in api.resources.__iter__():
-            print route
-            print api.resources[route]
+            self.codeCor += self.baseURLImplemTemplate % api.baseURL
+        for route in api.route:
             codeRouteparam = ""
             codeRoute = ""
-            if "{" in route:
-                a = route.split("{")[1].replace("}", "")
-                b = route.split("{")[0]
+            paramUrl = 0
+            if "{" in route.url:
+                a = route.url.split("{")[1]
+                url = route.url.split("{")[1].replace("}", "")
+                b = route.url.split("{")[0]
                 if "," in a:
                     codeRouteFormat = '[NSString stringwithformat: @"' + b + '",' + '@"'
                     param = a.split(",")
-                    paramUrl = len(param)
 
                     for p in param:
                         codeRouteFormat += "%@/"
@@ -272,30 +267,109 @@ class CodeGenerator():
                 else:
                     paramUrl = 1;
                     param = []
-                    param.append(a)
+                    param.append(url)
                     codeRoute = '[NSString stringwithformat:@"' + b + '%s",' + param[0] + '"]'
 
+            self.codeCor += self.APImethodDefineImplemTemplateOpen % ((route.method + route.url).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+            i = 0
+            while (i < paramUrl):
+                    if (i > 1):
+                        self.codeCor += self.paramSeparator
+                    self.codeCor += self.APImethodParamTemplate % param[i]
+                    i = i + 1
+            self.codeCor += self.APImethodDefineImplemTemplateClose
+            self.codeCor += self.APImethodImplemTemplateOpen
+            self.codeCor += self.APImethodImplemTemplate % (route.method.upper(), codeRoute)
+            self.codeCor += self.APImethodImplemTemplateClose
 
-            for method in api.resources[route].methods:
-                print method
-                print api.resources[route].methods[method]
-                self.codeCor += self.APImethodDefineImplemTemplateOpen % ((method + route).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
-                i = 0
-                while (i < paramUrl):
-                        if (i > 1):
-                            self.codeCor += self.paramSeparator
-                        self.codeCor += self.APImethodParamTemplate % param[i]
-                        i = i + 1
-                self.codeCor += self.APImethodDefineImplemTemplateClose
-                self.codeCor += self.APImethodImplemTemplateOpen
-                self.codeCor += self.APImethodImplemTemplate % (method.upper(), codeRoute)
-                self.codeCor += self.APImethodImplemTemplateClose
-        pass
+    #def generateAPICor(self, api):
+    #    title = api.title.replace(" ", "") + "Client"
+    #    if self.APIsingleton:
+    #        self.codeCor += self.singletonTemplate % (title, title)
+    #    self.codeCor += self.APIVariable
+    #    #url = api.baseUrl
+    #    for route in api.resources.__iter__():
+    #        print route
+    #        print api.resources[route]
+    #        if "{" in route:
+    #            a = route.split("{")[1].replace("}", "")
+    #            if "," in a:
+    #                param = a.split(",")
+    #                paramUrl = len(param)
+    #            else:
+    #                paramUrl = 1;
+    #                param = []
+    #                param.append(a)
+    #
+    #        for method in api.resources[route].methods:
+    #            print method
+    #            print api.resources[route].methods[method]
+    #            self.codeCor += self.APImethodTemplateOpen % ((method + route).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+    #            i = 0
+    #            while (i < paramUrl):
+    #                    if (i > 1):
+    #                        self.codeCor += self.paramSeparator
+    #                    self.codeCor += self.APImethodParamTemplate % param[i]
+    #                    i = i + 1
+    #            self.codeCor += self.APImethodTemplateClose
+    #    pass
 
-        #self.codeCor +=  self.implemTemplate % title
-        #self.codeCor += "\n" + self.classCloser
-        pass
-
+    #def generateAPIImplemCOR(self, api):
+    #    title = api.title.replace(" ", "") + "Client"
+    #    if self.APIsingleton:
+    #        self.codeCor += self.singletonImplemTemplate % (title, title, title)
+    #        if '{' in api.baseUri:
+    #            b = api.baseUri.split("{")[1].replace("}", "")
+    #            print b
+    #            url = api.baseUri.split("{")[0] + str(getattr(api, b))
+    #        self.codeCor += self.baseURLImplemTemplate % url
+    #    for route in api.resources.__iter__():
+    #        print route
+    #        print api.resources[route]
+    #        codeRouteparam = ""
+    #        codeRoute = ""
+    #        if "{" in route:
+    #            a = route.split("{")[1].replace("}", "")
+    #            b = route.split("{")[0]
+    #            if "," in a:
+    #                codeRouteFormat = '[NSString stringwithformat: @"' + b + '",' + '@"'
+    #                param = a.split(",")
+    #                paramUrl = len(param)
+    #
+    #                for p in param:
+    #                    codeRouteFormat += "%@/"
+    #                    codeRouteparam += ""
+    #                    codeParam = p + ","
+    #                codeRouteFormat += '"]'
+    #                codeRoute += '[NSString stringwithformat:@"' + codeRouteFormat + '",' + codeParam[:-1] + "]"
+    #
+    #            else:
+    #                paramUrl = 1;
+    #                param = []
+    #                param.append(a)
+    #                codeRoute = '[NSString stringwithformat:@"' + b + '%s",' + param[0] + '"]'
+    #
+    #
+    #        for method in api.resources[route].methods:
+    #            print method
+    #            print api.resources[route].methods[method]
+    #            self.codeCor += self.APImethodDefineImplemTemplateOpen % ((method + route).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+    #            i = 0
+    #            while (i < paramUrl):
+    #                    if (i > 1):
+    #                        self.codeCor += self.paramSeparator
+    #                    self.codeCor += self.APImethodParamTemplate % param[i]
+    #                    i = i + 1
+    #            self.codeCor += self.APImethodDefineImplemTemplateClose
+    #            self.codeCor += self.APImethodImplemTemplateOpen
+    #            self.codeCor += self.APImethodImplemTemplate % (method.upper(), codeRoute)
+    #            self.codeCor += self.APImethodImplemTemplateClose
+    #    pass
+    #
+    #    #self.codeCor +=  self.implemTemplate % title
+    #    #self.codeCor += "\n" + self.classCloser
+    #    pass
+    #
 
 
     def generateAPIFile(self, api):
@@ -317,7 +391,7 @@ class CodeGenerator():
     def generateAPIImplemFile(self, api):
         title = api.title.replace(" ", "") + "Client"
         self.file_implem_out = open(self.outputDirectory + title + self.extensien_implem_out, "w")
-        self.generateHeader(title+ self.extensien_implem_out)
+        self.generateHeader(title + self.extensien_implem_out)
         self.code = ""
         self.codeCor = ""
         self.codeInclude = ""
@@ -335,7 +409,7 @@ class CodeGenerator():
             return
         self.generateAPIFile(parsed)
         if verbose:
-            print "Generate " + self.outputDirectory +title + self.extensien_file_out
+            print "Generate " + self.outputDirectory + title + self.extensien_file_out
         if self.implem_out:
             self.generateAPIImplemFile(parsed)
             if verbose:

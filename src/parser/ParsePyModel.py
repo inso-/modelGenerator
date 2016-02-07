@@ -10,16 +10,17 @@ from utils.DjangoModel import *
 #from ...utils import *
 
 class ParsePyModel:
+    parsedAPI = None
     pyFile = None
     inClass = False
     inMeta = False
     className = ""
-    parsed = []
+    parsedModel = []
     tmpModel = DjangoModel()
 
     def __init__(self, fileName="out.py"):
         self.pyFile = open(fileName, 'r')
-        self.parsed = []
+        self.parsedModel = []
         self.inClass = False
         self.inMeta = False
         self.ClassName = ""
@@ -31,7 +32,7 @@ class ParsePyModel:
         for line in self.pyFile.readlines():
             if line[0:5] == "class":
                 if self.inClass:
-                    self.parsed.append(self.tmpModel)
+                    self.parsedModel.append(self.tmpModel)
                     self.inMeta = False;
                     self.tmpModel = DjangoModel()
                 else:
@@ -51,4 +52,4 @@ class ParsePyModel:
                     self.varType = line.split("=")[1].split("(")[0].replace(" ", "").replace("\n", "")
                 self.tmpModel.addFunc(self.varName, self.varType)
 
-        return self.parsed
+        return self.parsedModel

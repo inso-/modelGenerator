@@ -8,7 +8,6 @@ class swift(CodeGenerator):
         CodeGenerator.__init__(self)
         self.extensien_file_out = ".swift"
         self.defaultType = "Int"
-        self.include_foreign = True
         self.construct = True
         self.codeGenericInclude = "import UIKit\n\n"
         self.classTemplate = "class %s: NSObject {\n\n"
