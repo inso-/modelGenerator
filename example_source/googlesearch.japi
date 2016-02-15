@@ -1,0 +1,23 @@
+{
+  "title" : "GoogleSearch",
+  "baseURL" : "https://www.googleapis.com/customsearch/v1",
+  "URL_PARAM" : {
+    "version" : "v=1.0",
+    "key" : "AIzaSyB_S7CS3Ls4AN0GvXTgONTjE2JUfS7snkw",
+    "cx" : "009245379569417221673:uigxp7ljqeg&q=Kenny+Wright"
+    },
+  "EXAMPLE_PARAM" : {
+    "query": "Kenny%20Wright",
+    "website" : "nfl.com"
+  },
+
+  "ROUTE": [
+    {
+
+      "URL": "?key={key}&cx={cx}q={query}t&imgColorType=color&siteSearch={website}&",
+      "METHOD" : "get",
+	  "PARAM": {
+      }
+    }
+  ]
+}

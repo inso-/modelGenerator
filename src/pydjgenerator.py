@@ -52,6 +52,7 @@ class CodeGenerator():
     jsonConstructCorClose = ""
     jsonConstructCorCloseForeign = ""
     jsonConstructCloseTemplate = ""
+    jsonType = False
     serializeTemplate = ""
     serializeCorTemplate = ""
     foreignKeySerializeTemplate = ""
@@ -67,6 +68,10 @@ class CodeGenerator():
     APImethodImplemTemplateClose = ""
     APImethodImplemParamTemplate = ""
     paramSeparator = ""
+    arrayConstructCor = False
+    arrayConstructCorTemplate = ""
+    arrayTemplate = ""
+    replace = []
 
     def __init__(self):
         pass
@@ -74,8 +79,15 @@ class CodeGenerator():
     def getType(self, varType):
         if "ForeignKey" in varType:
             typeConverted = varType.split("(")[1].replace("'", "").replace(")", "")
+            typeConverted = typeConverted.capitalize()
             if self.include_foreign:
                 self.codeInclude += self.includeTemplate % typeConverted
+            return typeConverted
+        if 'list' in varType:
+            typeConverted = varType.replace("list(", "").replace(")", "")
+            if self.include_foreign:
+                self.codeInclude += self.includeTemplate % typeConverted
+            typeConverted = self.arrayTemplate % typeConverted
             return typeConverted
         varType = varType.replace("models.", "")
         typeConverted = self.typeTable.get(varType)
@@ -113,10 +125,14 @@ class CodeGenerator():
                     else:
                         self.codeCor += self.classVariableForeignTemplate % (typeVar, varName, varName)
                 else:
+                    tmp = varName
+                    if len(self.replace) != 0:
+                        for toRep in self.replace:
+                            tmp = tmp.replace(toRep, "_")
                     if self.inverseNameType == 1:
-                        self.codeCor += self.classVariableTemplate % (varName, typeVar)
+                        self.codeCor += self.classVariableTemplate % (tmp, typeVar)
                     else:
-                        self.codeCor += self.classVariableTemplate % (typeVar, varName)
+                        self.codeCor += self.classVariableTemplate % (typeVar, tmp)
                 if self.getter_setter:
                     self.generateGetterSetter(typeVar, varName)
                 if self.construct and self.jsonConstructCor is not False:
@@ -125,6 +141,8 @@ class CodeGenerator():
                     self.generateSerialize(varType, varName)
         if self.construct:
             self.codeConstruct += self.jsonConstructClose
+        if self.arrayConstructCor != False:
+            self.codeConstruct += self.arrayConstructCorTemplate % (model.nameClass, model.nameClass, model.nameClass, model.nameClass)
         if self.serialize:
             self.codeSerialize += self.serializeClose
 
@@ -133,10 +151,19 @@ class CodeGenerator():
         self.codeGetterSetter += self.setterTemplate % (varName.capitalize(), typeVar, varName, varName, varName)
 
     def generateConstruct(self, varType, varName):
-        jsontypeVar = self.getJsonType(varType)
+        if self.jsonType == True:
+            jsontypeVar = self.getJsonType(varType)
+        else:
+            jsontypeVar = ""
  #       if "List" in varType:
  #           return
-        self.codeConstruct += self.jsonConstructCorTemplate % (varName, jsontypeVar, varName)
+        if len(self.replace) != 0:
+            tmp = varName
+            for toRep in self.replace:
+                tmp = tmp.replace(toRep, "_")
+            self.codeConstruct += self.jsonConstructCorTemplate % (tmp, jsontypeVar, varName)
+        else:
+             self.codeConstruct += self.jsonConstructCorTemplate % (varName, jsontypeVar, varName)
         if "(" in jsontypeVar:
             self.codeConstruct += self.jsonContructCorCloseForeign
         else:
@@ -156,6 +183,7 @@ class CodeGenerator():
         path = self.outputDirectory + lang + "/model/"
         mkdir_p(path)
         for model in parsed:
+            model.nameClass = model.nameClass.capitalize()
             if prompt and not query_yes_no("generate " + model.nameClass + " ?"):
                 continue
             self.generateFile(model)
@@ -234,32 +262,58 @@ class CodeGenerator():
         self.codeCor += self.APIVariable
         #url = api.baseUrl
         for route in api.route:
+            param = []
             if "{" in route.url:
-                a = route.url.split("{")[1].replace("}", "")
-                paramUrl = 0
-                if "," in a:
-                    param = a.split(",")
-                    paramUrl = len(param)
-                else:
-                    paramUrl = 1;
-                    param = []
-                    param.append(a)
-
-                self.codeCor += self.APImethodTemplateOpen % ((route.method + route.url).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
-                i = 0
-                while (i < paramUrl):
-                        if (i > 1):
-                            self.codeCor += self.paramSeparator
-                        self.codeCor += self.APImethodParamTemplate % param[i]
+                a = route.url.split("{")
+                if (len(a) > 2):
+                    i = 1
+                    while (i < len(a)):
+                        b = a[i].split("}")[0]
+                        param.append(b)
                         i = i + 1
-
-                if self.APIImplemin_out:
-                    self.codeCor += self.APImethodImplemTemplateOpen
-                    self.codeCor += self.APImethodImplemTemplate % (route.method.upper(), route.url.replace("{", "\" + ").replace("}", ""))
-                    self.codeCor += self.APImethodImplemTemplateClose
+                else:
+                    b = a[1].split("}")[0]
+                    param.append(b)
 
 
-                self.codeCor += self.APImethodTemplateClose
+
+            self.codeCor += self.APImethodTemplateOpen % ((route.method + route.url).replace("/", "_").replace("{", "_").replace("__", "_").replace("}", ""))
+            i = 0
+            while (i < len(param)):
+                    if (i != 0):
+                        self.codeCor += self.paramSeparator
+                    self.codeCor += self.APImethodParamTemplate % param[i]
+                    i = i + 1
+            print len(param)
+            print param
+
+            codeRoute = ""
+            if self.APIImplemin_out:
+                self.codeCor += self.APImethodImplemTemplateOpen
+                if len(param) > 0:
+                    a = route.url.split("{")
+                    url = route.url.split("{")[1].replace("}", "")
+                    b = route.url.split("{")[0]
+                    codeRouteFormat = self.APIParamURLTemplate % b
+                    codeParam = ""
+                    i = 1
+                    for p in param:
+                        if self.URLParamFormat:
+                            codeRouteFormat += self.formatFlag
+                            codeParam = p + self.callParamSeparator
+                            codeRouteFormat += self.paramCloser
+                        else:
+                            codeParam += p + " + "
+                        tmp = a[i].split("}")
+                        if (len(tmp) > 1 and tmp[1] != ""):
+                            codeParam += "\"" + tmp[1] + "\" + "
+                        i = i + 1
+                    codeRoute += self.APIManyParamURLTemplate % (codeRouteFormat ,codeParam[:-2])
+                else:
+                    codeRoute += "\"" + route.url + "\""
+            self.codeCor += self.APImethodImplemTemplate % (route.method.upper(), codeRoute)
+            self.codeCor += self.APImethodImplemTemplateClose
+            self.codeCor += self.APImethodTemplateClose
 
         pass
 
@@ -401,7 +455,8 @@ class CodeGenerator():
         path = self.outputDirectory + lang + "/API/"
         mkdir_p(path)
         title = api.title.replace(" ", "") + "Client"
-        self.file_out = open(path + title + self.extensien_file_out, "w")
+        path += title + self.extensien_file_out
+        self.file_out = open(path, "w")
         self.code = ""
         self.codeInclude = ""
         self.codeCor += self.APIclassTemplate % title

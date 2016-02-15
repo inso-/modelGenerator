@@ -1,1 +1,1 @@
-__all__ = ["language", "cpp", "objc", "objcAFNetworkingAPI" ,  "sequelize", "csharp", "swift", "swiftAFNetworkingAPIBolts", "java"]
+__all__ = ["language", "cpp", "objc", "objcAFNetworkingAPI" ,  "sequelize", "csharp", "swift", "swiftAFNetworkingAPIBolts", "java", "swiftAFNetworkingAPIBoltsObjectMapping"]

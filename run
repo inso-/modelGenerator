@@ -1,4 +1,4 @@
 #!/bin/sh
 
 source env/bin/activate
-python src/main.py /Users/inso/work/TMmodelGenerator/nflarrest.japi -v
+python src/main.py /Users/inso/work/TMmodelGenerator/example_source/googlesearch.japi -v

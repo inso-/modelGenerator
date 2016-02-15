@@ -25,6 +25,7 @@ class objc(CodeGenerator):
         self.classVariableTemplate = "@property(nonatomic, strong) %s *%s;\n"
         self.includeTemplate = "@import \"%s" + self.extensien_file_out + "\"\n"
         self.implemTemplate = "@implementation %s"
+        self.arrayTemplate = "NSMutableArray /* %s */"
         self.typeTable = {
             "CharField": "NSString",
             "TextField": "NSString",

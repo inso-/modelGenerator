@@ -32,6 +32,7 @@ class java(CodeGenerator):
         self.jsonConstructCorClose = ";\n"
         self.jsonConstructCorCloseForeign = ");\n"
         self.jsonConstructClose = "\t\t}\n\t\tcatch (JSONException je) {\n\n\t\t}\n\t\treturn data;\n\t}\n"
+        self.jsonType = True
         self.getterTemplate = "\tpublic %s get%s() {\n\t\treturn %s;\n\t}\n\n"
         self.setterTemplate = "\tpublic void set%s(%s Param%s) {\n\t\t%s = Param%s;\n\t}\n\n"
         self.typeTable = {

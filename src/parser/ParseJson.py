@@ -10,12 +10,13 @@ class ParseJson:
     jsonFile = None
     inClass = False
     className = ""
+    filename = ""
     parsedAPI = None
     parsedModel = []
     tmpModel = DjangoModel()
 
     def __init__(self, fileName="/example_source/data.json"):
-        self.pyFile = open(fileName, 'r')
+        self.filename = fileName
         self.genered = []
         self.parsedModel = []
         self.inClass = False
@@ -37,20 +38,31 @@ class ParseJson:
                 model.setClassName("BaseClass" + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(1)))
 
             for key, value in it.items():
+                varName = key
                 if type(value) is list:
-                    for i in value:
-                        newModel = DjangoModel()
-                        newModel.setClassName(key)
-                        self.parse_rec(i, newModel)
-                        if newModel.nameClass not in self.genered:
-                            self.parsedModel.append(newModel)
-                            self.genered.append(newModel.nameClass)
-                if type(value) is dict:
                     newModel = DjangoModel()
-                    newModel.setClassName(key)
+                    newModel.setClassName(varName)
+                    self.parse_rec(value[0], newModel)
+                    if (key not in model.var):
+                        model.addFunc(varName, "list(%s)" % varName.capitalize())
+                        #if newModel.nameClass not in self.genered:
+                         #   self.parsedModel.append(newModel)
+                         #   self.genered.append(newModel.nameClass)
+                elif type(value) is dict:
+                    newModel = DjangoModel()
+                    newModel.setClassName(varName)
                     self.parse_rec(value, newModel)
+                    if (key not in model.var):
+                        model.addFunc(varName, varName)
+#                    print model.nameClass
+#                    print key + ", " + key
                 else:
-                    model.addFunc(key, str(type(value)))
+#                    print model.nameClass
+#                    print key + ", " + str(type(value))
+                    if (key not in model.var):
+                        model.addFunc(varName, str(type(value)))
+            if model.nameClass not in (o.nameClass for o in self.parsedModel):
+                self.parsedModel.append(model)
 
       #  if type(it) is list:
       #      if model is None:
@@ -67,19 +79,26 @@ class ParseJson:
       #              self.parsedModel.append(model)
       #              self.genered.append(model.nameClass)
 
-        if model != None and model.nameClass not in self.genered:
-            self.parsedModel.append(model)
-            self.genered.append(model.nameClass)
-            return
+      #  if model != None and model.nameClass not in self.genered:
+      #      self.parsedModel.append(model)
+      #      self.genered.append(model.nameClass)
+      #      return
 
     def parse(self, data="", name="BaseClass"):
         model = DjangoModel()
         model.setClassName(name)
         if data == "":
+            self.jsonFile = open(self.filename, 'r')
             self.parse_rec(json.load(self.jsonFile), model)
         else:
             self.parse_rec(data, model)
-        self.convert()
+        try:
+            from pprint import pprint
+            for e in self.parsedModel:
+                print(e)
+            self.convert()
+        except Exception as e:
+            print "ICI =" + str(e)
 
     def convert(self):
         converter = {
@@ -96,14 +115,22 @@ class ParseJson:
             #"DateTimeField": "DateTime",
         }
         i = 0
+#        import pprint
+        res = {}
         for a in self.parsedModel:
+#            pprint.pprint(a.var)
             for k, v in a.var.items():
                 v = v.replace("<type '", "").replace("'>", "")
+                if v in converter.values() or "foreignkey" in v:
+                    continue
+                if "list" in v:
+                    continue
                 a.var[k] = converter.get(v)
+#                print v
+#                print converter.get(v)
                 if a.var[k] == None:
                     print "Type %s not found for %s" % (v, k)
-                    a.var[k] = "TextField"
-                self.parsedModel[i] = a
+                    a.var[k] = "ForeignKey('" + v + "')"
             i = i + 1
 
 #def test():

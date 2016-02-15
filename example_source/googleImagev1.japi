@@ -1,0 +1,25 @@
+{
+  "title" : "GoogleImagev1",
+  "baseURL" : "https://ajax.googleapis.com/ajax/services/search/images?{version}&",
+  "URL_PARAM" : {
+    "version" : "v=1.0"
+    },
+  "EXAMPLE_PARAM" : {
+    "query": "barack%20obama",
+    "IP" : "1.1.1.1"
+  },
+
+  "ROUTE": [
+    {
+
+      "URL": "q={query}&userip={IP}",
+      "METHOD" : "get",
+	  "PARAM": {
+        "start_date": "string",
+        "end_date": "string",
+        "limit": "string",
+        "start_pos": "string"
+      }
+    }
+  ]
+}

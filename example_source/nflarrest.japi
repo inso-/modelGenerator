@@ -1,6 +1,6 @@
 {
   "title" : "NFLArrest",
-  "baseURL" : "www.NflArrest.com/api/{version}",
+  "baseURL" : "http://www.NflArrest.com/api/{version}",
   "URL_PARAM" : {
     "version" : "v1"
     },

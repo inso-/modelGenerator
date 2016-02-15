@@ -43,7 +43,8 @@ def main():
 
 def run_generate(data, verbose):
     for lang in planguage:
-        klass = inspect.getmembers(globals()[lang], inspect.isclass)[1][1]
+        member = inspect.getmembers(globals()[lang], inspect.isclass)
+        klass = member[len(member) - 1][1]
         toGenerate = globals()[lang.upper()]
         prompt = globals()[lang.upper() + "_PROMPT"]
         if (toGenerate == 1 or prompt == 1):

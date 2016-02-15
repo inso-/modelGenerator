@@ -1,1 +1,1 @@
-language =  ["cpp", "objc", "objcAFNetworkingAPI", "swift", "swiftAFNetworkingAPIBolts", "java", "csharp", "sequelize"]
+language =  ["cpp", "objc", "objcAFNetworkingAPI", "swift", "swiftAFNetworkingAPIBolts", "java", "csharp", "sequelize", "swiftAFNetworkingAPIBoltsObjectMapping"]
